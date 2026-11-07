@@ -34,3 +34,15 @@ height: 1080
 - camera: 0, 0, 5
 - background: #14281c
   > One script, one command
+
+## Meet the Duck
+
+- duration: 4
+- shape: model
+- model: models/duck.glb
+- rotationSpeed: 1
+- camera: 0, 1, 8
+- cameraTo: 0, 1, 4
+- cameraEase: ease-in-out
+- background: #1a1030
+  > A custom 3D model, same pipeline

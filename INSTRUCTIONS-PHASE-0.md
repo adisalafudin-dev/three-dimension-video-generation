@@ -39,7 +39,8 @@ Shared types in `src/script/types.ts` (`Storyboard`, `SceneData`). No database, 
 ## Storyboard format (contract)
 
 Frontmatter: title, fps, width, height. Each `##` heading is a scene.
-Keys: duration (seconds), shape (box | sphere | torus | model), model (path under public/), color, rotationSpeed (rad/s), camera ("x, y, z"), background, plus `>` lines for the caption.
+Keys: duration (seconds), shape (box | sphere | torus | model), model (path under public/, required when shape is model), color (ignored for models), rotationSpeed (rad/s), camera ("x, y, z" start position), cameraTo ("x, y, z" optional end position), cameraEase (linear | ease-in | ease-out | ease-in-out, default ease-in-out, only with cameraTo), background, plus `>` lines for the caption.
+Unknown keys are errors. The camera always looks at the origin. camera ("x, y, z"), background, plus `>` lines for the caption.
 Do not invent new keys without adding them to the types, parser and this contract first.
 
 ## Scope
@@ -75,10 +76,12 @@ Update this section when a phase completes.
 
 ## Current status
 
-Phase -1, Phase 0 and Phase 1 are DONE.
-Pipeline works end to end: storyboard/demo.md -> parse -> ScriptVideo -> out/video.mp4 (3 scenes, captions, 10s).
-Parser accepts indented ">" caption lines and should warn when a scene has no caption.
+Phases -1, 0, 1 and 2 are DONE.
+Pipeline: storyboard/\*.md -> parse (Zod-validated, fails with readable errors and exit 1) -> ScriptVideo -> out/video.mp4.
+Demo storyboard: 4 scenes, 14s (box, torus, sphere, duck .glb with camera dolly), captions in every scene.
+Implemented: Zod schema (strict keys, hex colors, vec3, even width/height, model file existence check), duplicate-key and unreadable-line detection, CameraRig (cameraTo + cameraEase, always looks at origin, no useFrame), .glb support with bounding-box auto-fit (no local Suspense; ThreeCanvas holds the frame until the model loads), turntable (Y-only) rotation for models.
+Rules learned: zod runs only in the parser (src/script/schema.ts is never imported by React code); Root.tsx types calculateMetadata with CalculateMetadataFunction<Props>; caption lines may be indented.
 Environment: Windows, Git Bash in VS Code, Node v24.18.1, angle GL, AMD Radeon 840M.
-Spikes folder: src/spikes/ (TestCube, TestModel with bounding-box auto-fit for .glb).
-Next action: Phase 2 (Zod validation, .glb in the pipeline, camera animation).
+Spikes folder: src/spikes/ (TestCube, TestModel).
+Next action: Phase 3 (transitions between scenes with @remotion/transitions, per-scene audio/voiceover).
 Update this section when a phase completes.
