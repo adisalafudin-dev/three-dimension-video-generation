@@ -75,8 +75,10 @@ Update this section when a phase completes.
 
 ## Current status
 
-Phase -1 (planning docs) and Phase 0 (setup + spikes) are DONE.
-Spikes: angle GL works on Windows with integrated AMD Radeon 840M; 10s 1080p renders in ~18s at concurrency 6; .glb loads via useGLTF(staticFile()) with bounding-box auto-fit.
-Environment: Windows, Git Bash in VS Code, Node v24.18.1.
-Next action: Phase 1 (MVP pipeline: parser, ScriptVideo, SceneView, ShapeMesh, Caption).
+Phase -1, Phase 0 and Phase 1 are DONE.
+Pipeline works end to end: storyboard/demo.md -> parse -> ScriptVideo -> out/video.mp4 (3 scenes, captions, 10s).
+Parser accepts indented ">" caption lines and should warn when a scene has no caption.
+Environment: Windows, Git Bash in VS Code, Node v24.18.1, angle GL, AMD Radeon 840M.
+Spikes folder: src/spikes/ (TestCube, TestModel with bounding-box auto-fit for .glb).
+Next action: Phase 2 (Zod validation, .glb in the pipeline, camera animation).
 Update this section when a phase completes.
