@@ -1,14 +1,12 @@
 import { Composition } from "remotion";
 import type { CalculateMetadataFunction } from "remotion";
 import { z } from "zod";
-import { ScriptVideo, sceneFrames } from "./compositions/ScriptVideo";
+import { ScriptVideo } from "./compositions/ScriptVideo";
 import storyboardJson from "./generated/storyboard.json";
 import type { Storyboard } from "./script/types";
+import { totalFrames } from "./script/timing";
 
 const storyboard = storyboardJson as unknown as Storyboard;
-
-const totalFrames = (sb: Storyboard) =>
-  sb.scenes.reduce((sum, s) => sum + sceneFrames(s.duration, sb.fps), 0);
 
 type Props = { storyboard: Storyboard };
 
@@ -39,10 +37,13 @@ const ScriptVideoSchema = z.object({
         rotationSpeed: z.number(),
         camera: z.array(z.number()),
         cameraTo: z.array(z.number()).optional(),
-        cameraEase: z.string(),
+        cameraEase: z.enum(["linear", "ease-in", "ease-out", "ease-in-out"]),
+        transition: z.enum(["none", "fade", "slide", "wipe"]),
+        transitionDuration: z.number(),
+        audio: z.string().optional(),
+        audioVolume: z.number(),
         background: z.string(),
-        caption: z.string(),
-      })
+      }),
     ),
   }),
 });

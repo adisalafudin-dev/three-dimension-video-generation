@@ -39,7 +39,9 @@ Shared types in `src/script/types.ts` (`Storyboard`, `SceneData`). No database, 
 ## Storyboard format (contract)
 
 Frontmatter: title, fps, width, height. Each `##` heading is a scene.
-Keys: duration (seconds), shape (box | sphere | torus | model), model (path under public/, required when shape is model), color (ignored for models), rotationSpeed (rad/s), camera ("x, y, z" start position), cameraTo ("x, y, z" optional end position), cameraEase (linear | ease-in | ease-out | ease-in-out, default ease-in-out, only with cameraTo), background, plus `>` lines for the caption.
+Keys: duration (seconds), shape (box | sphere | torus | model), model (path under public/, required when shape is model), color (ignored for models), rotationSpeed (rad/s), camera ("x, y, z" start position), cameraTo ("x, y, z" optional end position), cameraEase (linear | ease-in | ease-out | ease-in-out, default ease-in-out, only with cameraTo), background, transition (none | fade | slide | wipe, default none; how the scene enters from the previous one; not allowed on the first scene), transitionDuration (seconds, default 0.5, only with a transition other than none, must be shorter than both adjacent scenes), audio (path under public/, .mp3/.wav/.m4a/.aac/.ogg), audioVolume (0 to 1, default 1, only with audio), plus `>` lines for the caption.
+Unknown keys are errors. The camera always looks at the origin.
+Do not invent new keys without adding them to the types, parser and this contract first.
 Unknown keys are errors. The camera always looks at the origin. camera ("x, y, z"), background, plus `>` lines for the caption.
 Do not invent new keys without adding them to the types, parser and this contract first.
 
@@ -60,11 +62,6 @@ Won't (v1): web UI, cloud rendering, accounts, timeline editor, custom shaders, 
 - Phase 4: Claude-assisted storyboard generation (`PROMPT.md`), batch render.
 - Phase 5 (optional): output presets (9:16, 16:9), scene presets.
 
-## Current status
-
-Phase -1 (planning docs) is DONE. Next action: Phase 0 (create the project, run the 3 spikes).
-Update this section when a phase completes.
-
 ## Working rules
 
 - Present a short plan first, then build. Do not jump into code before I confirm the plan.
@@ -76,12 +73,24 @@ Update this section when a phase completes.
 
 ## Current status
 
-Phases -1, 0, 1 and 2 are DONE.
-Pipeline: storyboard/\*.md -> parse (Zod-validated, fails with readable errors and exit 1) -> ScriptVideo -> out/video.mp4.
-Demo storyboard: 4 scenes, 14s (box, torus, sphere, duck .glb with camera dolly), captions in every scene.
-Implemented: Zod schema (strict keys, hex colors, vec3, even width/height, model file existence check), duplicate-key and unreadable-line detection, CameraRig (cameraTo + cameraEase, always looks at origin, no useFrame), .glb support with bounding-box auto-fit (no local Suspense; ThreeCanvas holds the frame until the model loads), turntable (Y-only) rotation for models.
-Rules learned: zod runs only in the parser (src/script/schema.ts is never imported by React code); Root.tsx types calculateMetadata with CalculateMetadataFunction<Props>; caption lines may be indented.
-Environment: Windows, Git Bash in VS Code, Node v24.18.1, angle GL, AMD Radeon 840M.
-Spikes folder: src/spikes/ (TestCube, TestModel).
-Next action: Phase 3 (transitions between scenes with @remotion/transitions, per-scene audio/voiceover).
-Update this section when a phase completes.
+Phases -1, 0, 1, 2 and 3 are DONE. (steps 1-5 done, step 6 pending).
+Pipeline: storyboard/\*.md -> parse (Zod-validated, fails with readable errors and exit 1) -> ScriptVideo (TransitionSeries) -> out/video.mp4 (h264 + aac).
+Demo storyboard: 6 scenes, 30.5s (box, torus, sphere with camera dolly, duck .glb with camera dolly, box with orbit-style camera move, sphere), fade/slide/slide/wipe/fade transitions, Audio narration (one .mp3 per scene in public/audio/), captions in every scene. Verified render: (915 frames, 30.5s, 1920x1080, 30fps, h264 + aac.wav). Verified render: 375 frames, 12.5s, 1920x1080, 30fps, video + audio stream.
+Implemented (Phase 2): Zod schema (strict keys, hex colors, vec3, even width/height, model file existence check), duplicate-key and unreadable-line detection, CameraRig (cameraTo + cameraEase, always looks at origin, no useFrame), .glb support with bounding-box auto-fit (no local Suspense; ThreeCanvas holds the frame until the model loads), turntable (Y-only) rotation for models.
+Implemented (Phase 3): keys transition / transitionDuration / audio / audioVolume in types, schema, parser and contract; cross-scene transition checks in the parser (first scene cannot have a transition, transitionDuration must be shorter than both neighbours, entry + exit must fit in the scene); audio file existence check; src/script/timing.ts (sceneFrames, enterFrames, totalFrames); ScriptVideo uses TransitionSeries; per-scene <Audio> in SceneView.
+Rules learned:
+
+- zod runs only in the parser (src/script/schema.ts is never imported by React code); Root.tsx types calculateMetadata with CalculateMetadataFunction<Props>; caption lines may be indented.
+- Root.tsx has a hand-written Zod schema for Studio props. It must mirror every SceneData field, or Studio breaks.
+- Zod v4 ignores errorMap, so enum errors show the default "Invalid option: expected one of ..." text.
+- Total frames = sum(scene frames) - sum(transition frames); always use totalFrames from src/script/timing.ts.
+- A transition belongs to the scene that enters. Scene i+1 starts at the beginning of the overlap, so its audio starts then too. A scene's clip must end before the next scene's transition begins: duration >= clip length + next transitionDuration + ~0.2s.
+- Use <Audio> from @remotion/media (pinned 4.0.541). <Audio> from "remotion" was renamed Html5Audio.
+- Lint warnings @remotion/non-pure-animation on Root.tsx:41 and schema.ts:63 are false positives (the storyboard key "transition").
+- A render only reflects demo.md after npm run parse succeeds; a failed parse leaves the old out/video.mp4.
+  Environment: Windows, Git Bash in VS Code, Node v24.18.1, angle GL, AMD Radeon 840M.
+  Spikes folder: src/spikes/ (TestCube, TestModel).
+  Next action: Phase 4 (PROMPT.md template so Claude can generate a storyboard from a topic using only the allowed keys; optional batch render of several storyboards).
+  Update this section when a phase completes.
+- Narration workflow: one .mp3 per scene (audio is a per-scene key). Set each scene's duration >= clip length + next transitionDuration + 0.2s so the voice is not cut off.
+- Total video length = sum(scene durations) - sum(transition durations).

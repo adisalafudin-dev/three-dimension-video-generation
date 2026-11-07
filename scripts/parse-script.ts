@@ -131,6 +131,11 @@ for (const block of blocks) {
   if (s.model && !fs.existsSync(path.resolve("public", s.model))) {
     fail(`Scene "${title}": key "model": file not found at public/${s.model}`);
   }
+
+  if (s.audio && !fs.existsSync(path.resolve("public", s.audio))) {
+    fail(`Scene "${title}": key "audio": file not found at public/${s.audio}`);
+  }
+
   if (errors.length > before) continue;
 
   if (caption.length === 0) {
@@ -149,8 +154,49 @@ for (const block of blocks) {
     camera: s.camera ?? [0, 0, 5],
     cameraTo: s.cameraTo,
     cameraEase: s.cameraEase ?? "ease-in-out",
+    transition: s.transition ?? "none",
+    transitionDuration: s.transitionDuration ?? 0.5,
+    audio: s.audio,
+    audioVolume: s.audioVolume ?? 1,
     background: s.background ?? "#000000",
     caption: caption.join("\n"),
+  });
+}
+
+// --- cross-scene checks (a transition overlaps its neighbours) --------------
+
+if (errors.length === 0) {
+  const fps = fm.success ? (fm.data.fps ?? 30) : 30;
+  const frames = (sec: number) => Math.round(sec * fps);
+  const tIn = (i: number) =>
+    i > 0 && scenes[i].transition !== "none"
+      ? frames(scenes[i].transitionDuration)
+      : 0;
+
+  scenes.forEach((s, i) => {
+    if (s.transition !== "none" && i === 0) {
+      fail(
+        `Scene "${s.title}": key "transition": the first scene has nothing to transition from`,
+      );
+      return;
+    }
+    const own = frames(s.duration);
+    if (tIn(i) > 0 && tIn(i) >= frames(scenes[i - 1].duration)) {
+      fail(
+        `Scene "${s.title}": key "transitionDuration": must be shorter than the previous scene "${scenes[i - 1].title}" (${scenes[i - 1].duration}s)`,
+      );
+    }
+    if (tIn(i) > 0 && tIn(i) >= own) {
+      fail(
+        `Scene "${s.title}": key "transitionDuration": must be shorter than the scene itself (${s.duration}s)`,
+      );
+    }
+    const out = i + 1 < scenes.length ? tIn(i + 1) : 0;
+    if (tIn(i) > 0 && out > 0 && tIn(i) + out >= own) {
+      fail(
+        `Scene "${s.title}": entry and exit transitions together must be shorter than the scene (${s.duration}s)`,
+      );
+    }
   });
 }
 

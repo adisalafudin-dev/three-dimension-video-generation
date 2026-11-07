@@ -1,4 +1,5 @@
-import { AbsoluteFill, useVideoConfig } from "remotion";
+import { AbsoluteFill, staticFile, useVideoConfig } from "remotion";
+import { Audio } from "@remotion/media";
 import { ThreeCanvas } from "@remotion/three";
 import type { SceneData } from "../script/types";
 import { CameraRig } from "../three/CameraRig";
@@ -10,6 +11,9 @@ export const SceneView: React.FC<{ scene: SceneData }> = ({ scene }) => {
 
   return (
     <AbsoluteFill style={{ background: scene.background }}>
+      {scene.audio ? (
+        <Audio src={staticFile(scene.audio)} volume={scene.audioVolume} />
+      ) : null}
       <ThreeCanvas
         width={width}
         height={height}

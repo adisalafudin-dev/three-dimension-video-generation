@@ -12,8 +12,11 @@ export const SCENE_KEYS = [
   "cameraTo",
   "cameraEase",
   "background",
+  "transition",
+  "transitionDuration",
+  "audio",
+  "audioVolume",
 ] as const;
-
 export const FRONTMATTER_KEYS = ["title", "fps", "width", "height"] as const;
 
 const hexColor = z
@@ -41,13 +44,7 @@ export const SceneSchema = z
     duration: num
       .refine((n) => n >= 0.1, "must be at least 0.1 seconds")
       .optional(),
-    shape: z
-      .enum(["box", "sphere", "torus", "model"], {
-        errorMap: () => ({
-          message: "must be one of: box, sphere, torus, model",
-        }),
-      })
-      .optional(),
+    shape: z.enum(["box", "sphere", "torus", "model"]).optional(),
     model: z
       .string()
       .regex(
@@ -60,13 +57,23 @@ export const SceneSchema = z
     camera: vec3.optional(),
     cameraTo: vec3.optional(),
     cameraEase: z
-      .enum(["linear", "ease-in", "ease-out", "ease-in-out"], {
-        errorMap: () => ({
-          message: "must be one of: linear, ease-in, ease-out, ease-in-out",
-        }),
-      })
+      .enum(["linear", "ease-in", "ease-out", "ease-in-out"])
       .optional(),
     background: hexColor.optional(),
+    transition: z.enum(["none", "fade", "slide", "wipe"]).optional(),
+    transitionDuration: num
+      .refine((n) => n >= 0.1, "must be at least 0.1 seconds")
+      .optional(),
+    audio: z
+      .string()
+      .regex(
+        /\.(mp3|wav|m4a|aac|ogg)$/i,
+        "must be an audio path under public/, like audio/intro.mp3",
+      )
+      .optional(),
+    audioVolume: num
+      .refine((n) => n >= 0 && n <= 1, "must be between 0 and 1")
+      .optional(),
   })
   .strict()
   .superRefine((s, ctx) => {
@@ -89,6 +96,23 @@ export const SceneSchema = z
         code: "custom",
         path: ["cameraEase"],
         message: "has no effect without cameraTo",
+      });
+    }
+    if (
+      s.transitionDuration !== undefined &&
+      (!s.transition || s.transition === "none")
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["transitionDuration"],
+        message: 'has no effect without a transition other than "none"',
+      });
+    }
+    if (s.audioVolume !== undefined && !s.audio) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["audioVolume"],
+        message: "has no effect without audio",
       });
     }
   });
