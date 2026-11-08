@@ -1,0 +1,79 @@
+[
+  {
+    "text": " The",
+    "startMs": 100,
+    "endMs": 238,
+    "timestampMs": 169,
+    "confidence": null
+  },
+  {
+    "text": " light",
+    "startMs": 263,
+    "endMs": 463,
+    "timestampMs": 363,
+    "confidence": null
+  },
+  {
+    "text": " then",
+    "startMs": 475,
+    "endMs": 663,
+    "timestampMs": 569,
+    "confidence": null
+  },
+  {
+    "text": " bounces",
+    "startMs": 688,
+    "endMs": 1100,
+    "timestampMs": 894,
+    "confidence": null
+  },
+  {
+    "text": " off",
+    "startMs": 1125,
+    "endMs": 1288,
+    "timestampMs": 1207,
+    "confidence": null
+  },
+  {
+    "text": " the",
+    "startMs": 1313,
+    "endMs": 1413,
+    "timestampMs": 1363,
+    "confidence": null
+  },
+  {
+    "text": " back",
+    "startMs": 1425,
+    "endMs": 1688,
+    "timestampMs": 1557,
+    "confidence": null
+  },
+  {
+    "text": " wall",
+    "startMs": 1713,
+    "endMs": 1938,
+    "timestampMs": 1826,
+    "confidence": null
+  },
+  {
+    "text": " of",
+    "startMs": 1963,
+    "endMs": 2038,
+    "timestampMs": 2001,
+    "confidence": null
+  },
+  {
+    "text": " the",
+    "startMs": 2063,
+    "endMs": 2150,
+    "timestampMs": 2107,
+    "confidence": null
+  },
+  {
+    "text": " drop",
+    "startMs": 2175,
+    "endMs": 2575,
+    "timestampMs": 2375,
+    "confidence": null
+  }
+]

@@ -17,3 +17,7 @@ ls out/bad.json # must NOT exist
 npm run dev # Studio: ScriptVideo, 14s, 420 frames
 
 npx tsx scripts/parse-script.ts storyboard/bad-p3-a.md src/generated/\_tmp.json
+
+# Create TTS
+
+npm run narrate -- {{DIR}}/scene{{Number}} "The Sentence"

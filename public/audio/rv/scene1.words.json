@@ -1,0 +1,79 @@
+[
+  {
+    "text": " Sunlight",
+    "startMs": 100,
+    "endMs": 613,
+    "timestampMs": 357,
+    "confidence": null
+  },
+  {
+    "text": " looks",
+    "startMs": 638,
+    "endMs": 850,
+    "timestampMs": 744,
+    "confidence": null
+  },
+  {
+    "text": " white",
+    "startMs": 875,
+    "endMs": 1125,
+    "timestampMs": 1000,
+    "confidence": null
+  },
+  {
+    "text": " but",
+    "startMs": 1338,
+    "endMs": 1463,
+    "timestampMs": 1401,
+    "confidence": null
+  },
+  {
+    "text": " it",
+    "startMs": 1475,
+    "endMs": 1563,
+    "timestampMs": 1519,
+    "confidence": null
+  },
+  {
+    "text": " secretly",
+    "startMs": 1588,
+    "endMs": 2075,
+    "timestampMs": 1832,
+    "confidence": null
+  },
+  {
+    "text": " hides",
+    "startMs": 2100,
+    "endMs": 2475,
+    "timestampMs": 2288,
+    "confidence": null
+  },
+  {
+    "text": " every",
+    "startMs": 2488,
+    "endMs": 2713,
+    "timestampMs": 2601,
+    "confidence": null
+  },
+  {
+    "text": " single",
+    "startMs": 2738,
+    "endMs": 3063,
+    "timestampMs": 2901,
+    "confidence": null
+  },
+  {
+    "text": " color",
+    "startMs": 3088,
+    "endMs": 3425,
+    "timestampMs": 3257,
+    "confidence": null
+  },
+  {
+    "text": " inside",
+    "startMs": 3438,
+    "endMs": 3925,
+    "timestampMs": 3682,
+    "confidence": null
+  }
+]

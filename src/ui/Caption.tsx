@@ -7,7 +7,7 @@ import {
 
 export const Caption: React.FC<{ text: string }> = ({ text }) => {
   const frame = useCurrentFrame(); // local to the scene's <Sequence>
-  const { durationInFrames, fps } = useVideoConfig(); // also the scene's own duration
+  const { durationInFrames, fps, width, height } = useVideoConfig();
 
   if (!text) return null;
 
@@ -33,7 +33,7 @@ export const Caption: React.FC<{ text: string }> = ({ text }) => {
       style={{
         justifyContent: "flex-end",
         alignItems: "center",
-        paddingBottom: 90,
+        paddingBottom: height > width ? Math.round(height * 0.28) : 90,
       }}
     >
       <div

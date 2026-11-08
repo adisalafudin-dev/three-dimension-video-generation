@@ -1,0 +1,100 @@
+[
+  {
+    "text": " Each",
+    "startMs": 100,
+    "endMs": 350,
+    "timestampMs": 225,
+    "confidence": null
+  },
+  {
+    "text": " color",
+    "startMs": 375,
+    "endMs": 688,
+    "timestampMs": 532,
+    "confidence": null
+  },
+  {
+    "text": " bends",
+    "startMs": 713,
+    "endMs": 975,
+    "timestampMs": 844,
+    "confidence": null
+  },
+  {
+    "text": " by",
+    "startMs": 1000,
+    "endMs": 1175,
+    "timestampMs": 1088,
+    "confidence": null
+  },
+  {
+    "text": " a",
+    "startMs": 1200,
+    "endMs": 1288,
+    "timestampMs": 1244,
+    "confidence": null
+  },
+  {
+    "text": " different",
+    "startMs": 1313,
+    "endMs": 1638,
+    "timestampMs": 1476,
+    "confidence": null
+  },
+  {
+    "text": " amount",
+    "startMs": 1663,
+    "endMs": 2013,
+    "timestampMs": 1838,
+    "confidence": null
+  },
+  {
+    "text": " red",
+    "startMs": 2225,
+    "endMs": 2413,
+    "timestampMs": 2319,
+    "confidence": null
+  },
+  {
+    "text": " the",
+    "startMs": 2425,
+    "endMs": 2525,
+    "timestampMs": 2475,
+    "confidence": null
+  },
+  {
+    "text": " least",
+    "startMs": 2550,
+    "endMs": 2888,
+    "timestampMs": 2719,
+    "confidence": null
+  },
+  {
+    "text": " and",
+    "startMs": 2913,
+    "endMs": 3013,
+    "timestampMs": 2963,
+    "confidence": null
+  },
+  {
+    "text": " violet",
+    "startMs": 3038,
+    "endMs": 3438,
+    "timestampMs": 3238,
+    "confidence": null
+  },
+  {
+    "text": " the",
+    "startMs": 3463,
+    "endMs": 3550,
+    "timestampMs": 3507,
+    "confidence": null
+  },
+  {
+    "text": " most",
+    "startMs": 3575,
+    "endMs": 4050,
+    "timestampMs": 3813,
+    "confidence": null
+  }
+]

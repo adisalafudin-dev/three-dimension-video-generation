@@ -20,9 +20,9 @@ A local workflow: write a Markdown storyboard, run one command, get an MP4 with 
 
 1. Use `ThreeCanvas` from `@remotion/three`, never the plain R3F `<Canvas>`.
 2. Never use `useFrame` or `requestAnimationFrame`. All animation is a pure function of `useCurrentFrame()` / `useVideoConfig().fps`.
-3. One `<Sequence>` per scene. The frame counter inside is local to the scene.
+3. One `TransitionSeries.Sequence` per scene (from `@remotion/transitions`). The frame counter inside is local to the scene.
 4. `.glb` files live in `public/` and are loaded with `staticFile()`.
-5. Total duration is computed in `calculateMetadata` from the parsed storyboard.
+5. Total duration is computed in `calculateMetadata` from the parsed storyboard, minus the frames where scenes overlap during transitions.
 
 ## Architecture
 
@@ -39,11 +39,12 @@ Shared types in `src/script/types.ts` (`Storyboard`, `SceneData`). No database, 
 ## Storyboard format (contract)
 
 Frontmatter: title, fps, width, height. Each `##` heading is a scene.
-Keys: duration (seconds), shape (box | sphere | torus | model), model (path under public/, required when shape is model), color (ignored for models), rotationSpeed (rad/s), camera ("x, y, z" start position), cameraTo ("x, y, z" optional end position), cameraEase (linear | ease-in | ease-out | ease-in-out, default ease-in-out, only with cameraTo), background, transition (none | fade | slide | wipe, default none; how the scene enters from the previous one; not allowed on the first scene), transitionDuration (seconds, default 0.5, only with a transition other than none, must be shorter than both adjacent scenes), audio (path under public/, .mp3/.wav/.m4a/.aac/.ogg), audioVolume (0 to 1, default 1, only with audio), plus `>` lines for the caption.
-Unknown keys are errors. The camera always looks at the origin.
+Keys: duration (seconds), shape (box | sphere | torus | model), model (path under public/, required when shape is model), color (ignored for models), rotationSpeed (rad/s), camera ("x, y, z" start position), cameraTo ("x, y, z" optional end position), cameraEase (linear | ease-in | ease-out | ease-in-out, default ease-in-out, only with cameraTo), background, transition (none | fade | slide | wipe: how the scene enters from the previous one, no effect on the first scene), transitionDuration (seconds, only with a transition), audio (path under public/, mp3 | wav | m4a | aac | ogg), audioVolume (0 to 1, only with audio), plus `>` lines for the caption.
+Unknown keys are errors. The camera always looks at the origin. The camera always looks at the origin.
 Do not invent new keys without adding them to the types, parser and this contract first.
 Unknown keys are errors. The camera always looks at the origin. camera ("x, y, z"), background, plus `>` lines for the caption.
 Do not invent new keys without adding them to the types, parser and this contract first.
+add words (path to a .json under public/, Remotion Caption[] in ms, requires audio, produced by npm run narrate). The contract text currently repeats the “Unknown keys are errors” and “camera” sentences twice, so you can delete the duplicate lines.
 
 ## Scope
 
@@ -59,6 +60,7 @@ Won't (v1): web UI, cloud rendering, accounts, timeline editor, custom shaders, 
 - Phase 1: MVP pipeline (parser, scenes, shapes, captions, dev/render scripts).
 - Phase 2: validation, .glb, camera animation.
 - Phase 3: transitions, audio/voiceover.
+  - Phase 3b: 9:16 output + word-synced karaoke captions. Rename Phase 4 to the beat system (title/eyebrow, cards, callouts). Move PROMPT.md generation to Phase 7, together with script and TTS automation.
 - Phase 4: Claude-assisted storyboard generation (`PROMPT.md`), batch render.
 - Phase 5 (optional): output presets (9:16, 16:9), scene presets.
 
@@ -73,12 +75,14 @@ Won't (v1): web UI, cloud rendering, accounts, timeline editor, custom shaders, 
 
 ## Current status
 
-Phases -1, 0, 1, 2 and 3 are DONE. (steps 1-5 done, step 6 pending).
-Pipeline: storyboard/\*.md -> parse (Zod-validated, fails with readable errors and exit 1) -> ScriptVideo (TransitionSeries) -> out/video.mp4 (h264 + aac).
-Demo storyboard: 6 scenes, 30.5s (box, torus, sphere with camera dolly, duck .glb with camera dolly, box with orbit-style camera move, sphere), fade/slide/slide/wipe/fade transitions, Audio narration (one .mp3 per scene in public/audio/), captions in every scene. Verified render: (915 frames, 30.5s, 1920x1080, 30fps, h264 + aac.wav). Verified render: 375 frames, 12.5s, 1920x1080, 30fps, video + audio stream.
-Implemented (Phase 2): Zod schema (strict keys, hex colors, vec3, even width/height, model file existence check), duplicate-key and unreadable-line detection, CameraRig (cameraTo + cameraEase, always looks at origin, no useFrame), .glb support with bounding-box auto-fit (no local Suspense; ThreeCanvas holds the frame until the model loads), turntable (Y-only) rotation for models.
-Implemented (Phase 3): keys transition / transitionDuration / audio / audioVolume in types, schema, parser and contract; cross-scene transition checks in the parser (first scene cannot have a transition, transitionDuration must be shorter than both neighbours, entry + exit must fit in the scene); audio file existence check; src/script/timing.ts (sceneFrames, enterFrames, totalFrames); ScriptVideo uses TransitionSeries; per-scene <Audio> in SceneView.
-Rules learned:
+hase 3b done once the narrate spike has passed
+3a: per-scene transitions (fade, slide, wipe) via TransitionSeries, per-scene audio files with volume, 6-scene storyboard with narration renders correctly.
+Not done from the Shorts-style goal: 9:16 output, word-synced karaoke captions, beat-based overlays (see the roadmap discussion).
+Environment: Windows, Git Bash in VS Code, Node v24.18.1, angle GL, AMD Radeon 840M.
+Next action: Phase 3b (9:16 + word-level karaoke captions, starting with a spike for word timings from the TTS service).
+Update this section when a phase completes.
+
+## Rules learned:
 
 - zod runs only in the parser (src/script/schema.ts is never imported by React code); Root.tsx types calculateMetadata with CalculateMetadataFunction<Props>; caption lines may be indented.
 - Root.tsx has a hand-written Zod schema for Studio props. It must mirror every SceneData field, or Studio breaks.
@@ -94,3 +98,4 @@ Rules learned:
   Update this section when a phase completes.
 - Narration workflow: one .mp3 per scene (audio is a per-scene key). Set each scene's duration >= clip length + next transitionDuration + 0.2s so the voice is not cut off.
 - Total video length = sum(scene durations) - sum(transition durations).
+- Karaoke needs words JSON from npm run narrate; the narration text and the > line should match

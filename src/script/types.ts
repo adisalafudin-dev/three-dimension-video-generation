@@ -1,3 +1,5 @@
+import type { Caption } from "@remotion/captions";
+
 export type Vec3 = [number, number, number];
 
 export type CameraEase = "linear" | "ease-in" | "ease-out" | "ease-in-out";
@@ -20,6 +22,7 @@ export type SceneData = {
   audioVolume: number; // 0..1
   background: string;
   caption: string;
+  words?: Caption[]; // word timings for karaoke captions (inlined by the parser)
 };
 
 export type Storyboard = {

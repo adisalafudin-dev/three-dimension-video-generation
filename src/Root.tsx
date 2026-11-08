@@ -43,6 +43,18 @@ const ScriptVideoSchema = z.object({
         audio: z.string().optional(),
         audioVolume: z.number(),
         background: z.string(),
+        caption: z.string(),
+        words: z
+          .array(
+            z.object({
+              text: z.string(),
+              startMs: z.number(),
+              endMs: z.number(),
+              timestampMs: z.number().nullable(),
+              confidence: z.number().nullable(),
+            }),
+          )
+          .optional(),
       }),
     ),
   }),

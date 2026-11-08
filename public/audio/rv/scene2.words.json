@@ -1,0 +1,93 @@
+[
+  {
+    "text": " When",
+    "startMs": 100,
+    "endMs": 275,
+    "timestampMs": 188,
+    "confidence": null
+  },
+  {
+    "text": " a",
+    "startMs": 288,
+    "endMs": 338,
+    "timestampMs": 313,
+    "confidence": null
+  },
+  {
+    "text": " ray",
+    "startMs": 363,
+    "endMs": 538,
+    "timestampMs": 451,
+    "confidence": null
+  },
+  {
+    "text": " enters",
+    "startMs": 563,
+    "endMs": 875,
+    "timestampMs": 719,
+    "confidence": null
+  },
+  {
+    "text": " a",
+    "startMs": 900,
+    "endMs": 963,
+    "timestampMs": 932,
+    "confidence": null
+  },
+  {
+    "text": " raindrop",
+    "startMs": 988,
+    "endMs": 1500,
+    "timestampMs": 1244,
+    "confidence": null
+  },
+  {
+    "text": " it",
+    "startMs": 1663,
+    "endMs": 1750,
+    "timestampMs": 1707,
+    "confidence": null
+  },
+  {
+    "text": " slows",
+    "startMs": 1775,
+    "endMs": 2150,
+    "timestampMs": 1963,
+    "confidence": null
+  },
+  {
+    "text": " down",
+    "startMs": 2175,
+    "endMs": 2425,
+    "timestampMs": 2300,
+    "confidence": null
+  },
+  {
+    "text": " and",
+    "startMs": 2438,
+    "endMs": 2525,
+    "timestampMs": 2482,
+    "confidence": null
+  },
+  {
+    "text": " starts",
+    "startMs": 2550,
+    "endMs": 2888,
+    "timestampMs": 2719,
+    "confidence": null
+  },
+  {
+    "text": " to",
+    "startMs": 2913,
+    "endMs": 3013,
+    "timestampMs": 2963,
+    "confidence": null
+  },
+  {
+    "text": " bend",
+    "startMs": 3038,
+    "endMs": 3450,
+    "timestampMs": 3244,
+    "confidence": null
+  }
+]

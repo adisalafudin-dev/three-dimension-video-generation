@@ -7,8 +7,10 @@ import {
   FrontmatterSchema,
   SCENE_KEYS,
   SceneSchema,
+  WordsFileSchema,
 } from "../src/script/schema";
 import type { SceneData, Storyboard } from "../src/script/types";
+import type { Caption } from "@remotion/captions";
 
 const [input, output] = process.argv.slice(2);
 if (!input || !output) {
@@ -136,6 +138,53 @@ for (const block of blocks) {
     fail(`Scene "${title}": key "audio": file not found at public/${s.audio}`);
   }
 
+  let words: Caption[] | undefined;
+  if (s.words) {
+    const wordsFile = path.resolve("public", s.words);
+    if (!fs.existsSync(wordsFile)) {
+      fail(
+        `Scene "${title}": key "words": file not found at public/${s.words}`,
+      );
+    } else {
+      let json: unknown;
+      try {
+        json = JSON.parse(fs.readFileSync(wordsFile, "utf8"));
+      } catch {
+        fail(
+          `Scene "${title}": key "words": public/${s.words} is not valid JSON`,
+        );
+      }
+      if (json !== undefined) {
+        const result = WordsFileSchema.safeParse(json);
+        if (!result.success) {
+          for (const issue of result.error.issues.slice(0, 5)) {
+            const [index, field] = issue.path;
+            const where =
+              index === undefined
+                ? "file"
+                : `words[${String(index)}]${field === undefined ? "" : `.${String(field)}`}`;
+            fail(`Scene "${title}": key "words": ${where}: ${issue.message}`);
+          }
+        } else {
+          words = result.data.map((w) => ({
+            text: w.text,
+            startMs: w.startMs,
+            endMs: w.endMs,
+            timestampMs: w.timestampMs ?? Math.round((w.startMs + w.endMs) / 2),
+            confidence: w.confidence ?? null,
+          }));
+          const lastEndMs = words[words.length - 1].endMs;
+          const sceneMs = (s.duration ?? 3) * 1000;
+          if (lastEndMs > sceneMs) {
+            fail(
+              `Scene "${title}": key "words": the last word ends at ${(lastEndMs / 1000).toFixed(2)}s but the scene is only ${(sceneMs / 1000).toFixed(2)}s long (raise duration)`,
+            );
+          }
+        }
+      }
+    }
+  }
+
   if (errors.length > before) continue;
 
   if (caption.length === 0) {
@@ -191,7 +240,17 @@ if (errors.length === 0) {
         `Scene "${s.title}": key "transitionDuration": must be shorter than the scene itself (${s.duration}s)`,
       );
     }
+
     const out = i + 1 < scenes.length ? tIn(i + 1) : 0;
+
+    if (s.words) {
+      const voiceEnd = s.words[s.words.length - 1].endMs / 1000;
+      if (voiceEnd + out / fps > s.duration) {
+        console.warn(
+          `Warning: scene "${s.title}": the voice ends at ${voiceEnd.toFixed(2)}s and the next transition starts at ${(s.duration - out / fps).toFixed(2)}s (raise duration so the voice is not cut off)`,
+        );
+      }
+    }
     if (tIn(i) > 0 && out > 0 && tIn(i) + out >= own) {
       fail(
         `Scene "${s.title}": entry and exit transitions together must be shorter than the scene (${s.duration}s)`,
@@ -201,6 +260,27 @@ if (errors.length === 0) {
 }
 
 // --- result ----------------------------------------------------------------
+// cross-scene checks
+scenes.forEach((s, i) => {
+  if (i === 0 && s.transition !== "none") {
+    fail(
+      `Scene "${s.title}": key "transition": the first scene has nothing to transition from`,
+    );
+  }
+  if (i > 0 && s.transition !== "none") {
+    const shorter = Math.min(scenes[i - 1].duration, s.duration);
+    if (s.transitionDuration >= shorter) {
+      fail(
+        `Scene "${s.title}": key "transitionDuration": must be shorter than both neighboring scenes (${shorter}s)`,
+      );
+    }
+  }
+  if (s.audio && !fs.existsSync(path.resolve("public", s.audio))) {
+    fail(
+      `Scene "${s.title}": key "audio": file not found at public/${s.audio}`,
+    );
+  }
+});
 
 if (errors.length > 0) {
   console.error(`\n${errors.length} problem(s) in ${input}:`);

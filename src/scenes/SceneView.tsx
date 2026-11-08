@@ -5,6 +5,7 @@ import type { SceneData } from "../script/types";
 import { CameraRig } from "../three/CameraRig";
 import { ShapeMesh } from "../three/ShapeMesh";
 import { Caption } from "../ui/Caption";
+import { KaraokeCaption } from "../ui/KaraokeCaption";
 
 export const SceneView: React.FC<{ scene: SceneData }> = ({ scene }) => {
   const { width, height } = useVideoConfig();
@@ -28,7 +29,11 @@ export const SceneView: React.FC<{ scene: SceneData }> = ({ scene }) => {
         <directionalLight position={[5, 5, 5]} intensity={1.5} />
         <ShapeMesh scene={scene} />
       </ThreeCanvas>
-      <Caption text={scene.caption} />
+      {scene.words && scene.words.length > 0 ? (
+        <KaraokeCaption words={scene.words} />
+      ) : (
+        <Caption text={scene.caption} />
+      )}
     </AbsoluteFill>
   );
 };

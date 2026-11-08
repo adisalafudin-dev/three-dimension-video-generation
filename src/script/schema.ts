@@ -16,6 +16,7 @@ export const SCENE_KEYS = [
   "transitionDuration",
   "audio",
   "audioVolume",
+  "words",
 ] as const;
 export const FRONTMATTER_KEYS = ["title", "fps", "width", "height"] as const;
 
@@ -74,9 +75,23 @@ export const SceneSchema = z
     audioVolume: num
       .refine((n) => n >= 0 && n <= 1, "must be between 0 and 1")
       .optional(),
+    words: z
+      .string()
+      .regex(
+        /\.json$/i,
+        "must be a .json path under public/, like audio/scene1.words.json",
+      )
+      .optional(),
   })
   .strict()
   .superRefine((s, ctx) => {
+    if (s.words && !s.audio) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["words"],
+        message: "has no effect without audio",
+      });
+    }
     if (s.shape === "model" && !s.model) {
       ctx.addIssue({
         code: "custom",
@@ -132,3 +147,31 @@ export const FrontmatterSchema = z
     height: evenInt().optional(),
   })
   .strict();
+
+const wordSchema = z
+  .object({
+    text: z.string().min(1),
+    startMs: z.number().min(0),
+    endMs: z.number().min(0),
+    timestampMs: z.number().nullable().optional(),
+    confidence: z.number().nullable().optional(),
+  })
+  .refine((w) => w.endMs > w.startMs, {
+    error: "endMs must be greater than startMs",
+    path: ["endMs"],
+  });
+
+export const WordsFileSchema = z
+  .array(wordSchema)
+  .min(1, "must contain at least one word")
+  .superRefine((words, ctx) => {
+    for (let i = 1; i < words.length; i++) {
+      if (words[i].startMs < words[i - 1].startMs) {
+        ctx.addIssue({
+          code: "custom",
+          path: [i, "startMs"],
+          message: "must not be earlier than the previous word",
+        });
+      }
+    }
+  });
