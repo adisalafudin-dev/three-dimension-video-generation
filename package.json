@@ -47,9 +47,9 @@
     "render": "npm run parse && remotion render src/index.ts ScriptVideo out/video.mp4 --gl=angle",
     "narrate": "tsx scripts/narrate.ts",
     "dev:vertical": "tsx scripts/parse-script.ts storyboard/rainbow-vertical.md src/generated/storyboard.json && remotion studio",
-    "render:vertical": "tsx scripts/parse-script.ts storyboard/rainbow-vertical.md src/generated/storyboard.json && remotion render src/index.ts ScriptVideo out/vertical.mp4 --gl=angle"
+    "render:vertical": "tsx scripts/parse-script.ts storyboard/rainbow-vertical.md src/generated/storyboard.json && remotion render src/index.ts ScriptVideo out/vertical.mp4 --gl=angle",
     "dev:kits": "tsx scripts/parse-script.ts storyboard/kits-vertical.md src/generated/storyboard.json && remotion studio",
-"render:kits": "tsx scripts/parse-script.ts storyboard/kits-vertical.md src/generated/storyboard.json && remotion render src/index.ts ScriptVideo out/kits.mp4 --gl=angle"
+    "render:kits": "tsx scripts/parse-script.ts storyboard/kits-vertical.md src/generated/storyboard.json && remotion render src/index.ts ScriptVideo out/kits.mp4 --gl=angle"
   },
   "allowScripts": {
     "esbuild": false
