@@ -8,10 +8,13 @@ import type { Chapter } from "../script/chapters";
 import { sceneFrames } from "../script/timing";
 import type { SceneData } from "../script/types";
 import { CameraRig } from "../three/CameraRig";
-import { ShapeMesh } from "../three/ShapeMesh";
+
 import { BeatLayer } from "../ui/beats/BeatLayer";
 import { Caption } from "../ui/Caption";
 import { KaraokeCaption } from "../ui/KaraokeCaption";
+import { WorldMesh } from "../three/WorldMesh"; // gantikan import ShapeMesh
+// import { ShapeMesh } from "../three/ShapeMesh";
+import { buildActionTracks } from "../script/actions";
 
 // Audio, beats and caption of one scene. Runs inside the scene's own <Sequence>,
 // so useCurrentFrame() is local to the scene.
@@ -40,6 +43,7 @@ export const ChapterView: React.FC<{ chapter: Chapter }> = ({ chapter }) => {
   const { width, height, fps } = useVideoConfig();
   const world = chapter.scenes[0];
   const points = useMemo(() => buildCameraPoints(chapter, fps), [chapter, fps]);
+  const tracks = useMemo(() => buildActionTracks(chapter, fps), [chapter, fps]);
 
   return (
     <AbsoluteFill style={{ background: world.background }}>
@@ -51,7 +55,8 @@ export const ChapterView: React.FC<{ chapter: Chapter }> = ({ chapter }) => {
         <CameraRig points={points} />
         <ambientLight intensity={0.6} />
         <directionalLight position={[5, 5, 5]} intensity={1.5} />
-        <ShapeMesh scene={world} />
+        {/* <ShapeMesh scene={world} /> */}
+        <WorldMesh scene={world} tracks={tracks} />
       </ThreeCanvas>
       {chapter.scenes.map((scene, j) => (
         <Sequence

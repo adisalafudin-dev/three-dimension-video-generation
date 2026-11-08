@@ -8,12 +8,16 @@ import {
   SCENE_KEYS,
   SceneSchema,
   WordsFileSchema,
+  KIT_ACTIONS_BY_KIT,
 } from "../src/script/schema";
 import { checkBeatOverlaps, parseBeatLine } from "./lib/beats";
+import { parseKitPartLine, validateKitParts } from "./lib/kits";
 import type { Caption } from "@remotion/captions";
 import type {
   Beat,
   CameraKey,
+  KitAction,
+  KitPart,
   SceneData,
   Storyboard,
 } from "../src/script/types";
@@ -96,7 +100,7 @@ if (!fm.success) {
 // --- scenes ----------------------------------------------------------------
 
 const scenes: SceneData[] = [];
-const meta: { worldKeys: string[]; camera: boolean }[] = [];
+const meta: { worldKeys: string[]; camera: boolean; parts: boolean }[] = [];
 
 const blocks = content.split(/^## /m).slice(1); // text before the first "## " is ignored
 
@@ -114,6 +118,7 @@ for (const block of blocks) {
   const kv: Record<string, string> = {};
   const caption: string[] = [];
   const beatLines: string[] = [];
+  const partLines: string[] = [];
   const before = errors.length;
 
   for (const line of lines) {
@@ -124,6 +129,8 @@ for (const block of blocks) {
       kv[m[1]] = m[2].trim();
     } else if (/^\s*@/.test(line)) {
       beatLines.push(line.trim());
+    } else if (/^\s*\+\s/.test(line)) {
+      partLines.push(line.trim());
     } else if (/^\s*>/.test(line)) {
       caption.push(line.replace(/^\s*>\s?/, "").trim());
     } else if (/^\s*-[^-]/.test(line)) {
@@ -199,6 +206,7 @@ for (const block of blocks) {
   }
   const beats: Beat[] = [];
   const cameraKeys: CameraKey[] = [];
+  const kitActions: KitAction[] = [];
   for (const line of beatLines) {
     const parsedBeat = parseBeatLine(
       line,
@@ -209,6 +217,7 @@ for (const block of blocks) {
     );
     if (parsedBeat?.kind === "beat") beats.push(parsedBeat.beat);
     if (parsedBeat?.kind === "camera") cameraKeys.push(parsedBeat.key);
+    if (parsedBeat?.kind === "action") kitActions.push(parsedBeat.action);
   }
   checkBeatOverlaps(beats, title, fail);
   for (let k = 1; k < cameraKeys.length; k++) {
@@ -218,6 +227,15 @@ for (const block of blocks) {
       );
     }
   }
+  const kitParts: KitPart[] = [];
+  for (const line of partLines) {
+    const part = parseKitPartLine(line, title, suggest, fail);
+    if (part) kitParts.push(part);
+  }
+  if (partLines.length > 0 && !s.kit) {
+    fail(`Scene "${title}": "+" lines need a "kit" key (kit: layers or kit: road)`);
+  }
+  if (s.kit) validateKitParts(s.kit, kitParts, title, fail);
   if (cameraKeys.length > 0 && s.cameraTo) {
     fail(
       `Scene "${title}": key "cameraTo" cannot be combined with camera keyframes ("@ <s> camera ...")`,
@@ -239,12 +257,15 @@ for (const block of blocks) {
       "color",
       "background",
       "rotationSpeed",
+      "kit",
     ].filter((k) => k in kv),
     camera: "camera" in kv,
+    parts: partLines.length > 0,
   });
   scenes.push({
     title,
     chapter: s.chapter,
+    kit: s.kit,
     duration: s.duration ?? 3,
     shape: s.shape ?? "box",
     model: s.model,
@@ -262,6 +283,8 @@ for (const block of blocks) {
     beats: beats.length > 0 ? beats : undefined,
     words,
     cameraKeys: cameraKeys.length > 0 ? cameraKeys : undefined,
+    kitParts: kitParts.length > 0 ? kitParts : undefined,
+    kitActions: kitActions.length > 0 ? kitActions : undefined,
   });
 }
 
@@ -292,6 +315,11 @@ if (errors.length === 0) {
         `Scene "${s.title}": key "camera": inside chapter "${s.chapter}" the camera continues from the previous scene (use "@  camera pos=..." to move it)`,
       );
     }
+    if (meta[i].parts) {
+      fail(
+        `Scene "${s.title}": "+" lines: inside chapter "${s.chapter}" the kit parts come from its first scene "${first.title}" (remove them)`,
+      );
+    }
     if (s.transition !== "none") {
       fail(
         `Scene "${s.title}": key "transition": only the first scene of a chapter can have a transition`,
@@ -303,10 +331,48 @@ if (errors.length === 0) {
     s.color = first.color;
     s.background = first.background;
     s.rotationSpeed = first.rotationSpeed;
+    s.kit = first.kit;
+    s.kitParts = first.kitParts;
     const prev = scenes[i - 1];
     s.camera = prev.cameraKeys?.length
       ? prev.cameraKeys[prev.cameraKeys.length - 1].pos
       : (prev.cameraTo ?? prev.camera);
+  });
+}
+
+// --- kit actions must belong to the chapter's kit --------------------------------
+
+if (errors.length === 0) {
+  scenes.forEach((s, i) => {
+    if (!s.kitActions) return;
+    let f = i;
+    while (f > 0 && s.chapter && scenes[f - 1].chapter === s.chapter) f--;
+    const first = scenes[f];
+    for (const a of s.kitActions) {
+      if (!first.kit) {
+        fail(
+          `Scene "${s.title}": action "${a.type}" needs a kit (set "kit: layers" or "kit: road" on the chapter's first scene)`,
+        );
+        continue;
+      }
+      const allowed = KIT_ACTIONS_BY_KIT[first.kit] as readonly string[];
+      if (!allowed.includes(a.type)) {
+        fail(
+          `Scene "${s.title}": action "${a.type}" does not belong to kit "${first.kit}" (allowed: ${allowed.join(", ")})`,
+        );
+      }
+      if (a.type === "highlight") {
+        const names = (first.kitParts ?? []).flatMap((p) =>
+          p.type === "layer" ? [p.name] : [],
+        );
+        if (!names.includes(a.layer)) {
+          const sug = suggest(a.layer, names);
+          fail(
+            `Scene "${s.title}": action "highlight": no layer named "${a.layer}"${sug ? ` (did you mean "${sug}"?)` : ""}. Layers: ${names.join(", ")}`,
+          );
+        }
+      }
+    }
   });
 }
 

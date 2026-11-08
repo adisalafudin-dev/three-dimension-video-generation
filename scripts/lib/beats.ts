@@ -1,16 +1,19 @@
 import { BEAT_FIELDS, BEAT_TYPES, BeatSchema } from "../../src/script/schema";
-import type { Beat, CameraKey } from "../../src/script/types";
+import type { Beat, CameraKey, KitAction } from "../../src/script/types";
 
 type Suggest = (key: string, known: readonly string[]) => string | null;
 type Fail = (msg: string) => void;
 export type ParsedBeat =
   | { kind: "beat"; beat: Beat }
-  | { kind: "camera"; key: CameraKey };
+  | { kind: "camera"; key: CameraKey }
+  | { kind: "action"; action: KitAction };
+
+const ACTION_TYPES = ["explode", "highlight", "drive", "rain"] as const;
 
 const shorten = (s: string) => (s.length > 60 ? `${s.slice(0, 57)}...` : s);
 
 // key="quoted value" or key=bare ; returns an error string when something cannot be read
-const readFields = (rest: string): Record<string, string> | string => {
+export const readFields = (rest: string): Record<string, string> | string => {
   const out: Record<string, string> = {};
   const re = /\s*(\w+)=("(?:[^"\\]|\\.)*"|[^\s"]+)/y;
   let pos = 0;
@@ -116,10 +119,14 @@ export const parseBeatLine = (
     }
   }
 
-  const forSec = (data as { for?: number }).for;
-  const rest = data as any;
-  delete rest.for;
-  const end = start + (forSec ?? sceneDuration - start);
+  const { for: forSec, ...rest } = data;
+  // Kit actions animate over `for` seconds (default 1s); highlight and overlays last until the scene end by default
+  const isAction = (ACTION_TYPES as readonly string[]).includes(rest.type);
+  const defaultSpan =
+    isAction && rest.type !== "highlight"
+      ? Math.min(1, sceneDuration - start)
+      : sceneDuration - start;
+  const end = start + (forSec ?? defaultSpan);
   let ok = true;
   if (start >= sceneDuration) {
     fail(`${where}: starts at ${start}s but the scene is only ${sceneDuration}s long`);
@@ -131,6 +138,9 @@ export const parseBeatLine = (
     ok = false;
   }
   if (!ok) return null;
+  if (isAction) {
+    return { kind: "action", action: { start, end, ...rest } as KitAction };
+  }
   return { kind: "beat", beat: { start, end, ...rest } as Beat };
 };
 

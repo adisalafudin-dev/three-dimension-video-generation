@@ -8,6 +8,22 @@ export type TransitionType = "none" | "fade" | "slide" | "wipe";
 
 export type CameraKey = { time: number; pos: Vec3; ease: CameraEase };
 
+export type KitName = "layers" | "road";
+
+// Static parts of a kit ("+ layer name=... color=... thickness=...")
+export type KitPart =
+  | { type: "layer"; name: string; color: string; thickness: number }
+  | { type: "rain"; intensity: number }
+  | { type: "car"; color: string };
+
+// Timed kit action ("@ <s> explode amount=1.2 for=1.5"); start/end in seconds from the scene start
+export type KitAction = { start: number; end: number } & (
+  | { type: "explode"; amount: number }
+  | { type: "highlight"; layer: string }
+  | { type: "drive"; to: number }
+  | { type: "rain"; intensity: number }
+);
+
 export type BeatType =
   | "title"
   | "tag"
@@ -49,6 +65,9 @@ export type SceneData = {
   // in SceneData, after words?:
   beats?: Beat[]; // timed overlays (title, cards, callouts)
   cameraKeys?: CameraKey[];
+  kit?: KitName; // procedural 3D world instead of a single shape
+  kitParts?: KitPart[];
+  kitActions?: KitAction[];
 };
 
 export type Storyboard = {

@@ -91,6 +91,31 @@ const ScriptVideoSchema = z.object({
             }),
           )
           .optional(),
+        kit: z.enum(["layers", "road"]).optional(), // setelah `chapter`
+        kitParts: z // sebelum `cameraKeys`
+          .array(
+            z.object({
+              type: z.enum(["layer", "rain", "car"]),
+              name: z.string().optional(),
+              color: z.string().optional(),
+              thickness: z.number().optional(),
+              intensity: z.number().optional(),
+            }),
+          )
+          .optional(),
+        kitActions: z
+          .array(
+            z.object({
+              type: z.enum(["explode", "highlight", "drive", "rain"]),
+              start: z.number(),
+              end: z.number(),
+              amount: z.number().optional(),
+              layer: z.string().optional(),
+              to: z.number().optional(),
+              intensity: z.number().optional(),
+            }),
+          )
+          .optional(),
       }),
     ),
   }),

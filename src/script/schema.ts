@@ -7,6 +7,8 @@ export const SCENE_KEYS = [
   "shape",
   "model",
   "color",
+  "chapter",
+  "kit",
   "rotationSpeed",
   "camera",
   "cameraTo",
@@ -29,6 +31,10 @@ export const BEAT_TYPES = [
   "checklist",
   "callout",
   "camera",
+  "explode",
+  "highlight",
+  "drive",
+  "rain",
 ] as const;
 
 const hexColor = z
@@ -50,6 +56,10 @@ export const BEAT_FIELDS: Record<
   checklist: ["items", "for"],
   callout: ["text", "x", "y", "at", "for"],
   camera: ["pos", "ease"],
+  explode: ["amount", "for"],
+  highlight: ["layer", "for"],
+  drive: ["to", "for"],
+  rain: ["intensity", "for"],
 };
 
 const beatText = z.string().min(1, "must not be empty");
@@ -127,6 +137,28 @@ export const BeatSchema = z.discriminatedUnion("type", [
     .strict(),
   z
     .object({
+      type: z.literal("explode"),
+      amount: num.refine((n) => n >= 0 && n <= 3, "must be between 0 and 3"),
+      for: beatFor,
+    })
+    .strict(),
+  z.object({ type: z.literal("highlight"), layer: beatText, for: beatFor }).strict(),
+  z
+    .object({
+      type: z.literal("drive"),
+      to: num.refine((n) => n >= -8 && n <= 8, "must be between -8 and 8"),
+      for: beatFor,
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("rain"),
+      intensity: num.refine((n) => n >= 0 && n <= 1, "must be between 0 and 1"),
+      for: beatFor,
+    })
+    .strict(),
+  z
+    .object({
       type: z.literal("camera"),
       pos: vec3,
       ease: z.enum(["linear", "ease-in", "ease-out", "ease-in-out"]).optional(),
@@ -152,6 +184,7 @@ export const SceneSchema = z
       .string()
       .regex(/^[\w-]+$/, "must use letters, digits, - and _ only")
       .optional(),
+    kit: z.enum(["layers", "road"]).optional(),
     rotationSpeed: num.optional(),
     camera: vec3.optional(),
     cameraTo: vec3.optional(),
@@ -183,6 +216,17 @@ export const SceneSchema = z
   })
   .strict()
   .superRefine((s, ctx) => {
+    if (s.kit) {
+      for (const k of ["shape", "model", "color", "rotationSpeed"] as const) {
+        if (s[k] !== undefined) {
+          ctx.addIssue({
+            code: "custom",
+            path: [k],
+            message: `not allowed with kit "${s.kit}" (kits have their own look)`,
+          });
+        }
+      }
+    }
     if (s.words && !s.audio) {
       ctx.addIssue({
         code: "custom",
@@ -273,3 +317,39 @@ export const WordsFileSchema = z
       }
     }
   });
+
+// --- Kits: static parts ("+ <part> key=value ...") and which parts/actions each kit accepts ---
+export const KIT_PART_FIELDS = {
+  layer: ["name", "color", "thickness"],
+  rain: ["intensity"],
+  car: ["color"],
+} as const;
+export const KIT_PART_TYPES = ["layer", "rain", "car"] as const;
+
+export const KIT_PARTS_BY_KIT = {
+  layers: ["layer"],
+  road: ["rain", "car"],
+} as const;
+
+export const KIT_ACTIONS_BY_KIT = {
+  layers: ["explode", "highlight"],
+  road: ["drive", "rain"],
+} as const;
+
+export const KitPartSchema = z.discriminatedUnion("type", [
+  z
+    .object({
+      type: z.literal("layer"),
+      name: beatText,
+      color: hexColor,
+      thickness: num.refine((n) => n >= 0.05 && n <= 1, "must be between 0.05 and 1"),
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("rain"),
+      intensity: num.refine((n) => n >= 0 && n <= 1, "must be between 0 and 1"),
+    })
+    .strict(),
+  z.object({ type: z.literal("car"), color: hexColor }).strict(),
+]);
