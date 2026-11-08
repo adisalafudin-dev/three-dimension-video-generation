@@ -2,20 +2,12 @@ import { useMemo } from "react";
 import {
   AbsoluteFill,
   interpolate,
-  staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { loadFont } from "@remotion/fonts";
 import { createTikTokStyleCaptions } from "@remotion/captions";
 import type { Caption } from "@remotion/captions";
-
-// Local font so every machine renders the same glyphs (file: public/fonts/Inter-Bold.woff2)
-loadFont({
-  family: "Inter",
-  url: staticFile("fonts/Inter-Bold.woff2"),
-  weight: "700",
-});
+import "./font";
 
 const COMBINE_MS = 1200; // how many words share one on-screen line (higher = longer lines)
 const CENTER_Y = 0.68; // vertical position as a fraction of the frame height (clear of the Shorts UI)

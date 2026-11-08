@@ -20,6 +20,17 @@ export const SCENE_KEYS = [
 ] as const;
 export const FRONTMATTER_KEYS = ["title", "fps", "width", "height"] as const;
 
+export const BEAT_TYPES = [
+  "title",
+  "tag",
+  "badge",
+  "quote",
+  "stat",
+  "checklist",
+  "callout",
+  "camera",
+] as const;
+
 const hexColor = z
   .string()
   .regex(
@@ -27,10 +38,46 @@ const hexColor = z
     "must be a hex color like #ff6b6b",
   );
 
+export const BEAT_FIELDS: Record<
+  (typeof BEAT_TYPES)[number],
+  readonly string[]
+> = {
+  title: ["eyebrow", "text", "for"],
+  tag: ["text", "for"],
+  badge: ["text", "for"],
+  quote: ["text", "by", "for"],
+  stat: ["value", "label", "for"],
+  checklist: ["items", "for"],
+  callout: ["text", "x", "y", "at", "for"],
+  camera: ["pos", "ease"],
+};
+
+const beatText = z.string().min(1, "must not be empty");
+
 const num = z
   .string()
   .transform((s) => Number(s))
   .refine((n) => Number.isFinite(n), "must be a number");
+
+const beatFor = num
+  .refine((n) => n >= 0.2, "must be at least 0.2 seconds")
+  .optional();
+const percent = num.refine(
+  (n) => n >= 0 && n <= 100,
+  "must be between 0 and 100",
+);
+const items = z
+  .string()
+  .transform((s) =>
+    s
+      .split("|")
+      .map((p) => p.trim())
+      .filter(Boolean),
+  )
+  .refine(
+    (v) => v.length >= 1 && v.length <= 5,
+    'must be 1 to 5 items separated by "|", like "one | two | three"',
+  );
 
 const vec3 = z
   .string()
@@ -39,6 +86,53 @@ const vec3 = z
     (v): v is Vec3 => v.length === 3 && v.every((n) => Number.isFinite(n)),
     'must be exactly 3 numbers, like "0, 1, 5"',
   );
+
+export const BeatSchema = z.discriminatedUnion("type", [
+  z
+    .object({
+      type: z.literal("title"),
+      eyebrow: beatText.optional(),
+      text: beatText,
+      for: beatFor,
+    })
+    .strict(),
+  z.object({ type: z.literal("tag"), text: beatText, for: beatFor }).strict(),
+  z.object({ type: z.literal("badge"), text: beatText, for: beatFor }).strict(),
+  z
+    .object({
+      type: z.literal("quote"),
+      text: beatText,
+      by: beatText.optional(),
+      for: beatFor,
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("stat"),
+      value: beatText,
+      label: beatText,
+      for: beatFor,
+    })
+    .strict(),
+  z.object({ type: z.literal("checklist"), items, for: beatFor }).strict(),
+  z
+    .object({
+      type: z.literal("callout"),
+      text: beatText,
+      x: percent.optional(),
+      y: percent.optional(),
+      at: vec3.optional(),
+      for: beatFor,
+    })
+    .strict(),
+  z
+    .object({
+      type: z.literal("camera"),
+      pos: vec3,
+      ease: z.enum(["linear", "ease-in", "ease-out", "ease-in-out"]).optional(),
+    })
+    .strict(),
+]);
 
 export const SceneSchema = z
   .object({
@@ -54,6 +148,10 @@ export const SceneSchema = z
       )
       .optional(),
     color: hexColor.optional(),
+    chapter: z
+      .string()
+      .regex(/^[\w-]+$/, "must use letters, digits, - and _ only")
+      .optional(),
     rotationSpeed: num.optional(),
     camera: vec3.optional(),
     cameraTo: vec3.optional(),

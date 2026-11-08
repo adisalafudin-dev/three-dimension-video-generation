@@ -6,8 +6,9 @@ import { fade } from "@remotion/transitions/fade";
 import { slide } from "@remotion/transitions/slide";
 import { wipe } from "@remotion/transitions/wipe";
 import type { Storyboard, TransitionType } from "../script/types";
-import { enterFrames, sceneFrames } from "../script/timing";
-import { SceneView } from "../scenes/SceneView";
+import { enterFrames } from "../script/timing";
+import { ChapterView } from "../scenes/ChapterView";
+import { groupChapters } from "../script/chapters";
 
 type AnyPresentation = TransitionPresentation<Record<string, unknown>>;
 
@@ -26,12 +27,14 @@ export const ScriptVideo: React.FC<{ storyboard: Storyboard }> = ({
   storyboard,
 }) => {
   const { scenes, fps } = storyboard;
+  const chapters = groupChapters(scenes, fps);
 
   return (
     <AbsoluteFill>
       <TransitionSeries>
-        {scenes.flatMap((scene, i) => {
-          const enter = enterFrames(scenes, i, fps);
+        {chapters.flatMap((chapter, i) => {
+          const scene = chapter.scenes[0]; // a transition belongs to the scene that enters
+          const enter = enterFrames(scenes, chapter.firstIndex, fps);
           const items: ReactElement[] = [];
 
           if (enter > 0 && scene.transition !== "none") {
@@ -47,10 +50,10 @@ export const ScriptVideo: React.FC<{ storyboard: Storyboard }> = ({
           items.push(
             <TransitionSeries.Sequence
               key={`s-${i}`}
-              durationInFrames={sceneFrames(scene.duration, fps)}
-              name={scene.title}
+              durationInFrames={chapter.frames}
+              name={scene.chapter ?? scene.title}
             >
-              <SceneView scene={scene} />
+              <ChapterView chapter={chapter} />
             </TransitionSeries.Sequence>,
           );
 

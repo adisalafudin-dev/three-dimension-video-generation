@@ -24,6 +24,7 @@ const calculateMetadata: CalculateMetadataFunction<Props> = ({ props }) => ({
 const ScriptVideoSchema = z.object({
   storyboard: z.object({
     title: z.string(),
+    chapter: z.string().optional(),
     fps: z.number(),
     width: z.number(),
     height: z.number(),
@@ -52,6 +53,41 @@ const ScriptVideoSchema = z.object({
               endMs: z.number(),
               timestampMs: z.number().nullable(),
               confidence: z.number().nullable(),
+            }),
+          )
+          .optional(),
+        cameraKeys: z // before `beats`
+          .array(
+            z.object({
+              time: z.number(),
+              pos: z.array(z.number()),
+              ease: z.enum(["linear", "ease-in", "ease-out", "ease-in-out"]),
+            }),
+          )
+          .optional(),
+        beats: z
+          .array(
+            z.object({
+              type: z.enum([
+                "title",
+                "tag",
+                "badge",
+                "quote",
+                "stat",
+                "checklist",
+                "callout",
+              ]),
+              start: z.number(),
+              end: z.number(),
+              text: z.string().optional(),
+              eyebrow: z.string().optional(),
+              by: z.string().optional(),
+              value: z.string().optional(),
+              label: z.string().optional(),
+              items: z.array(z.string()).optional(),
+              x: z.number().optional(),
+              y: z.number().optional(),
+              at: z.array(z.number()).optional(),
             }),
           )
           .optional(),

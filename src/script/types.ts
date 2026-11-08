@@ -6,8 +6,31 @@ export type CameraEase = "linear" | "ease-in" | "ease-out" | "ease-in-out";
 
 export type TransitionType = "none" | "fade" | "slide" | "wipe";
 
+export type CameraKey = { time: number; pos: Vec3; ease: CameraEase };
+
+export type BeatType =
+  | "title"
+  | "tag"
+  | "badge"
+  | "quote"
+  | "stat"
+  | "checklist"
+  | "callout";
+
+// Timed overlay inside a scene. start/end are seconds from the scene start (end is resolved by the parser).
+export type Beat = { start: number; end: number } & (
+  | { type: "title"; eyebrow?: string; text: string }
+  | { type: "tag"; text: string }
+  | { type: "badge"; text: string }
+  | { type: "quote"; text: string; by?: string }
+  | { type: "stat"; value: string; label: string }
+  | { type: "checklist"; items: string[] }
+  | { type: "callout"; text: string; x?: number; y?: number; at?: Vec3 } // x/y = screen %, at = 3D point
+);
+
 export type SceneData = {
   title: string;
+  chapter?: string;
   duration: number; // seconds
   shape: "box" | "sphere" | "torus" | "model";
   model?: string; // path under public/, required when shape is 'model'
@@ -23,6 +46,9 @@ export type SceneData = {
   background: string;
   caption: string;
   words?: Caption[]; // word timings for karaoke captions (inlined by the parser)
+  // in SceneData, after words?:
+  beats?: Beat[]; // timed overlays (title, cards, callouts)
+  cameraKeys?: CameraKey[];
 };
 
 export type Storyboard = {

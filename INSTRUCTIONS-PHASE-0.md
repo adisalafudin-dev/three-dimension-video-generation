@@ -45,6 +45,8 @@ Do not invent new keys without adding them to the types, parser and this contrac
 Unknown keys are errors. The camera always looks at the origin. camera ("x, y, z"), background, plus `>` lines for the caption.
 Do not invent new keys without adding them to the types, parser and this contract first.
 add words (path to a .json under public/, Remotion Caption[] in ms, requires audio, produced by npm run narrate). The contract text currently repeats the “Unknown keys are errors” and “camera” sentences twice, so you can delete the duplicate lines.
+add the beat line syntax @ <seconds> <type> key="value" ... [for=<seconds>]. List the 7 types, their fields and the slot rule.
+add chapter, and add @ <seconds> camera pos="x, y, z" [ease="..."]. Note the 3D at="x, y, z" on callouts.
 
 ## Scope
 
@@ -63,6 +65,8 @@ Won't (v1): web UI, cloud rendering, accounts, timeline editor, custom shaders, 
   - Phase 3b: 9:16 output + word-synced karaoke captions. Rename Phase 4 to the beat system (title/eyebrow, cards, callouts). Move PROMPT.md generation to Phase 7, together with script and TTS automation.
 - Phase 4: Claude-assisted storyboard generation (`PROMPT.md`), batch render.
 - Phase 5 (optional): output presets (9:16, 16:9), scene presets.
+  - Phase 5 done once Studio looks right
+- Phase 6 is next: scene kits (the procedural tile cross-section, and road + rain + car, which needs a car model).
 
 ## Working rules
 
@@ -75,12 +79,7 @@ Won't (v1): web UI, cloud rendering, accounts, timeline editor, custom shaders, 
 
 ## Current status
 
-hase 3b done once the narrate spike has passed
-3a: per-scene transitions (fade, slide, wipe) via TransitionSeries, per-scene audio files with volume, 6-scene storyboard with narration renders correctly.
-Not done from the Shorts-style goal: 9:16 output, word-synced karaoke captions, beat-based overlays (see the roadmap discussion).
-Environment: Windows, Git Bash in VS Code, Node v24.18.1, angle GL, AMD Radeon 840M.
-Next action: Phase 3b (9:16 + word-level karaoke captions, starting with a spike for word timings from the TTS service).
-Update this section when a phase completes.
+Phases 4 and 5 need the Studio check from step 2 before they count as done.
 
 ## Rules learned:
 
@@ -99,3 +98,11 @@ Update this section when a phase completes.
 - Narration workflow: one .mp3 per scene (audio is a per-scene key). Set each scene's duration >= clip length + next transitionDuration + 0.2s so the voice is not cut off.
 - Total video length = sum(scene durations) - sum(transition durations).
 - Karaoke needs words JSON from npm run narrate; the narration text and the > line should match
+- Slots: two beats in the same slot can’t overlap in time, and the parser errors if they do. The slots are title, tag, badge, and card (quote, stat and checklist share one). Callouts can overlap freely.
+- Values with spaces need double quotes. Unquoted text gives cannot read "words x=10 y=200".
+- Highlight: _word_ works in the title text, quote text, stat label, checklist items and callout text.
+  Checklists: 1 to 5 items, separated by |.
+- beats use plain frame math with no nested <Sequence>. All of their animation takes a local frame passed in by BeatLayer.-Camera: it always looks at the origin. A keyframe moves the camera from its previous position and arrives at the time you give. A scene with no keyframe holds its position. Keyframe times must increase within a scene.
+- Chapters: later scenes in a chapter can’t set shape, model, color, background, rotationSpeed, camera or transition. They inherit the world and continue from the previous camera position. A chapter’s scenes must be consecutive.
+- Callouts: use at="x, y, z" for a 3D point or x and y for a screen position, not both. A callout hides when its point is behind the camera.
+- Rule 3 (updated): one <Sequence> per scene, plus one TransitionSeries.Sequence per chapter that holds the single ThreeCanvas.

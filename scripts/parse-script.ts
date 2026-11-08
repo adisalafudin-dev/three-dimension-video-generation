@@ -9,8 +9,16 @@ import {
   SceneSchema,
   WordsFileSchema,
 } from "../src/script/schema";
-import type { SceneData, Storyboard } from "../src/script/types";
+import { checkBeatOverlaps, parseBeatLine } from "./lib/beats";
 import type { Caption } from "@remotion/captions";
+import type {
+  Beat,
+  CameraKey,
+  SceneData,
+  Storyboard,
+} from "../src/script/types";
+import { groupChapters } from "../src/script/chapters";
+import { enterFrames } from "../src/script/timing";
 
 const [input, output] = process.argv.slice(2);
 if (!input || !output) {
@@ -88,6 +96,8 @@ if (!fm.success) {
 // --- scenes ----------------------------------------------------------------
 
 const scenes: SceneData[] = [];
+const meta: { worldKeys: string[]; camera: boolean }[] = [];
+
 const blocks = content.split(/^## /m).slice(1); // text before the first "## " is ignored
 
 if (blocks.length === 0)
@@ -103,6 +113,7 @@ for (const block of blocks) {
 
   const kv: Record<string, string> = {};
   const caption: string[] = [];
+  const beatLines: string[] = [];
   const before = errors.length;
 
   for (const line of lines) {
@@ -111,6 +122,8 @@ for (const block of blocks) {
       if (m[1] in kv)
         fail(`Scene "${title}": key "${m[1]}": defined more than once`);
       kv[m[1]] = m[2].trim();
+    } else if (/^\s*@/.test(line)) {
+      beatLines.push(line.trim());
     } else if (/^\s*>/.test(line)) {
       caption.push(line.replace(/^\s*>\s?/, "").trim());
     } else if (/^\s*-[^-]/.test(line)) {
@@ -184,6 +197,32 @@ for (const block of blocks) {
       }
     }
   }
+  const beats: Beat[] = [];
+  const cameraKeys: CameraKey[] = [];
+  for (const line of beatLines) {
+    const parsedBeat = parseBeatLine(
+      line,
+      title,
+      s.duration ?? 3,
+      suggest,
+      fail,
+    );
+    if (parsedBeat?.kind === "beat") beats.push(parsedBeat.beat);
+    if (parsedBeat?.kind === "camera") cameraKeys.push(parsedBeat.key);
+  }
+  checkBeatOverlaps(beats, title, fail);
+  for (let k = 1; k < cameraKeys.length; k++) {
+    if (cameraKeys[k].time <= cameraKeys[k - 1].time) {
+      fail(
+        `Scene "${title}": camera keyframes must be in increasing time order (${cameraKeys[k].time}s comes after ${cameraKeys[k - 1].time}s)`,
+      );
+    }
+  }
+  if (cameraKeys.length > 0 && s.cameraTo) {
+    fail(
+      `Scene "${title}": key "cameraTo" cannot be combined with camera keyframes ("@ <s> camera ...")`,
+    );
+  }
 
   if (errors.length > before) continue;
 
@@ -193,8 +232,19 @@ for (const block of blocks) {
     );
   }
 
+  meta.push({
+    worldKeys: [
+      "shape",
+      "model",
+      "color",
+      "background",
+      "rotationSpeed",
+    ].filter((k) => k in kv),
+    camera: "camera" in kv,
+  });
   scenes.push({
     title,
+    chapter: s.chapter,
     duration: s.duration ?? 3,
     shape: s.shape ?? "box",
     model: s.model,
@@ -209,53 +259,112 @@ for (const block of blocks) {
     audioVolume: s.audioVolume ?? 1,
     background: s.background ?? "#000000",
     caption: caption.join("\n"),
+    beats: beats.length > 0 ? beats : undefined,
+    words,
+    cameraKeys: cameraKeys.length > 0 ? cameraKeys : undefined,
   });
 }
 
-// --- cross-scene checks (a transition overlaps its neighbours) --------------
+// --- chapters: consecutive scenes with the same `chapter` share one 3D world ----
+
+if (errors.length === 0) {
+  const seen = new Set<string>();
+  scenes.forEach((s, i) => {
+    if (!s.chapter) return;
+    const continues = i > 0 && scenes[i - 1].chapter === s.chapter;
+    if (!continues) {
+      if (seen.has(s.chapter)) {
+        fail(
+          `Scene "${s.title}": key "chapter": "${s.chapter}" was already used by earlier scenes that are not directly before this one (a chapter must be consecutive)`,
+        );
+      }
+      seen.add(s.chapter);
+      return;
+    }
+    const first = scenes.find((x) => x.chapter === s.chapter) as SceneData;
+    for (const k of meta[i].worldKeys) {
+      fail(
+        `Scene "${s.title}": key "${k}": inside chapter "${s.chapter}" the world comes from its first scene "${first.title}" (remove this key)`,
+      );
+    }
+    if (meta[i].camera) {
+      fail(
+        `Scene "${s.title}": key "camera": inside chapter "${s.chapter}" the camera continues from the previous scene (use "@  camera pos=..." to move it)`,
+      );
+    }
+    if (s.transition !== "none") {
+      fail(
+        `Scene "${s.title}": key "transition": only the first scene of a chapter can have a transition`,
+      );
+    }
+    // inherit the world and the camera position from the previous scene
+    s.shape = first.shape;
+    s.model = first.model;
+    s.color = first.color;
+    s.background = first.background;
+    s.rotationSpeed = first.rotationSpeed;
+    const prev = scenes[i - 1];
+    s.camera = prev.cameraKeys?.length
+      ? prev.cameraKeys[prev.cameraKeys.length - 1].pos
+      : (prev.cameraTo ?? prev.camera);
+  });
+}
+
+// --- cross-chapter checks (a transition overlaps its neighbours) ------------
 
 if (errors.length === 0) {
   const fps = fm.success ? (fm.data.fps ?? 30) : 30;
-  const frames = (sec: number) => Math.round(sec * fps);
-  const tIn = (i: number) =>
-    i > 0 && scenes[i].transition !== "none"
-      ? frames(scenes[i].transitionDuration)
-      : 0;
+  const chapters = groupChapters(scenes, fps);
+  const label = (c: (typeof chapters)[number]) =>
+    c.scenes[0].chapter
+      ? `chapter "${c.scenes[0].chapter}"`
+      : `scene "${c.scenes[0].title}"`;
 
-  scenes.forEach((s, i) => {
-    if (s.transition !== "none" && i === 0) {
+  chapters.forEach((c, k) => {
+    const first = c.scenes[0];
+    if (first.transition !== "none" && k === 0) {
       fail(
-        `Scene "${s.title}": key "transition": the first scene has nothing to transition from`,
+        `Scene "${first.title}": key "transition": the first scene has nothing to transition from`,
       );
       return;
     }
-    const own = frames(s.duration);
-    if (tIn(i) > 0 && tIn(i) >= frames(scenes[i - 1].duration)) {
+    const enter = enterFrames(scenes, c.firstIndex, fps);
+    const exit =
+      k + 1 < chapters.length
+        ? enterFrames(scenes, chapters[k + 1].firstIndex, fps)
+        : 0;
+    if (enter > 0 && enter >= chapters[k - 1].frames) {
       fail(
-        `Scene "${s.title}": key "transitionDuration": must be shorter than the previous scene "${scenes[i - 1].title}" (${scenes[i - 1].duration}s)`,
+        `Scene "${first.title}": key "transitionDuration": must be shorter than the previous ${label(chapters[k - 1])} (${(chapters[k - 1].frames / fps).toFixed(1)}s)`,
       );
     }
-    if (tIn(i) > 0 && tIn(i) >= own) {
+    if (enter > 0 && enter >= c.frames) {
       fail(
-        `Scene "${s.title}": key "transitionDuration": must be shorter than the scene itself (${s.duration}s)`,
+        `Scene "${first.title}": key "transitionDuration": must be shorter than its own ${label(c)} (${(c.frames / fps).toFixed(1)}s)`,
       );
     }
+    if (enter > 0 && exit > 0 && enter + exit >= c.frames) {
+      fail(
+        `Scene "${first.title}": entry and exit transitions together must be shorter than its ${label(c)} (${(c.frames / fps).toFixed(1)}s)`,
+      );
+    }
+  });
 
-    const out = i + 1 < scenes.length ? tIn(i + 1) : 0;
-
-    if (s.words) {
+  // The voice of a chapter's last scene must end before the next transition starts
+  chapters.forEach((c, k) => {
+    c.scenes.forEach((s, j) => {
+      if (!s.words) return;
+      const out =
+        j === c.scenes.length - 1 && k + 1 < chapters.length
+          ? enterFrames(scenes, chapters[k + 1].firstIndex, fps)
+          : 0;
       const voiceEnd = s.words[s.words.length - 1].endMs / 1000;
       if (voiceEnd + out / fps > s.duration) {
         console.warn(
           `Warning: scene "${s.title}": the voice ends at ${voiceEnd.toFixed(2)}s and the next transition starts at ${(s.duration - out / fps).toFixed(2)}s (raise duration so the voice is not cut off)`,
         );
       }
-    }
-    if (tIn(i) > 0 && out > 0 && tIn(i) + out >= own) {
-      fail(
-        `Scene "${s.title}": entry and exit transitions together must be shorter than the scene (${s.duration}s)`,
-      );
-    }
+    });
   });
 }
 
