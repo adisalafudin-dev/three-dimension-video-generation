@@ -8,10 +8,11 @@ Paste this whole file into Claude/Gemini and fill the INPUT block. The answer mu
 - TARGET_SECONDS: {{TARGET_SECONDS}} (default 40)
 - FORMAT: {{FORMAT}} (vertical = 1080x1920, landscape = 1920x1080; default vertical)
 - VOICE: {{VOICE}} (default en-US-GuyNeural; Indonesian: id-ID-ArdiNeural)
-- AVAILABLE_MODELS: {{AVAILABLE_MODELS}} (default: none; only list real files, e.g. models/duck.glb)
-- MODELS: recommend
+- AVAILABLE_MODELS: {{AVAILABLE_MODELS}} (`none` [default] | `recommend` | real files, optionally with clips, e.g. `models/walker.glb (clips: Walk, Idle)`)
 
 ## TASK
+
+If AVAILABLE_MODELS is `recommend`, do NOT write a storyboard yet. Output only a `## MODELS NEEDED` list (max 3, only where a model helps explain the topic): for each, the scene purpose, file name `public/models/<name>.glb`, 2 to 3 search keywords (sites: Poly Pizza, Quaternius, Kenney, Sketchfab with Downloadable), limits (under 5 MB, low-poly, CC0 or CC-BY with credit), and a primitive fallback. Never write URLs. End with: "Download them, then send AVAILABLE_MODELS with the real files." Otherwise:
 
 Write ONE storyboard for TOPIC. Output exactly one markdown code block and nothing else. Use ONLY the keys below. Audio and word timings are generated later from `narration`, so never write `audio` or `words`.
 
@@ -27,29 +28,28 @@ Write ONE storyboard for TOPIC. Output exactly one markdown code block and nothi
 
 ### Scene keys (all optional)
 
-| Key                  | Rule                                                                                                                          |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| narration            | quoted text spoken aloud, max 400 chars, about 12 to 25 words                                                                 |
-| duration             | seconds >= 0.1, or `auto` (needs narration; = voice length + 0.4s + next transition). Always use `auto` when narration exists |
-| chapter              | name (letters, digits, - \_). Consecutive scenes with the same name share ONE 3D world and a continuous camera                |
-| shape                | box, sphere, torus, model [box]                                                                                               |
-| model                | .glb/.gltf path; required when shape is model; only from AVAILABLE_MODELS                                                     |
-| animation            | embedded clip name or zero-based index; model only; name must match a clip in the GLB                                        |
-| animationSpeed       | positive playback multiplier [1]; requires animation                                                                         |
-| modelRotate          | on/off [on]; model only; off disables the Y-axis turntable                                                                      |
-| theme                | space or farm; chapter background/theme from its first scene                                                                    |
-| themeDetail          | low/high [low]; only with theme                                                                                                 |
-| kit                  | layers or road (replaces shape/model/color/rotationSpeed, which are then forbidden)                                           |
-| color                | hex [#ffffff]; rotationSpeed rad/s [1]; background hex [#000000]                                                              |
-| camera               | "x, y, z" start position [0, 0, 5]; always looks at the origin                                                                |
-| cameraTo, cameraEase | end position over the whole scene; ease linear, ease-in, ease-out, ease-in-out. cameraEase only with cameraTo                 |
-| transition           | none, fade, slide, wipe [none]; how THIS scene enters. Not on the first scene, and only on the FIRST scene of a chapter       |
-| transitionDuration   | seconds [0.5]; only with a transition                                                                                         |
-| audioVolume          | 0 to 1; only with narration                                                                                                   |
+| Key                       | Rule                                                                                                                                                                   |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| narration                 | quoted text spoken aloud, max 400 chars, about 12 to 25 words                                                                                                          |
+| duration                  | seconds >= 0.1, or `auto` (needs narration; = voice length + 0.4s + next transition). Always use `auto` when narration exists                                          |
+| chapter                   | name (letters, digits, - \_). Consecutive scenes with the same name share ONE 3D world and a continuous camera                                                         |
+| shape                     | box, sphere, torus, model [box]                                                                                                                                        |
+| model                     | .glb/.gltf path; required when shape is model; only from AVAILABLE_MODELS                                                                                              |
+| kit                       | layers or road (replaces shape/model/color/rotationSpeed, which are then forbidden)                                                                                    |
+| color                     | hex [#ffffff]; rotationSpeed rad/s [1]; background hex [#000000]                                                                                                       |
+| camera                    | "x, y, z" start position [0, 0, 5]; always looks at the origin                                                                                                         |
+| cameraTo, cameraEase      | end position over the whole scene; ease linear, ease-in, ease-out, ease-in-out. cameraEase only with cameraTo                                                          |
+| transition                | none, fade, slide, wipe [none]; how THIS scene enters. Not on the first scene, and only on the FIRST scene of a chapter                                                |
+| transitionDuration        | seconds [0.5]; only with a transition                                                                                                                                  |
+| audioVolume               | 0 to 1; only with narration                                                                                                                                            |
+| theme                     | `space` or `farm`: full procedural background (replaces `background`; cannot combine). Pick from TOPIC: astronomy, black hole, rocket -> space; farming, crops -> farm |
+| themeDetail               | `low` or `high` [low]; only with theme                                                                                                                                 |
+| animation, animationSpeed | embedded clip name (or 0-based index) and speed > 0 [1]; only shape model, and ONLY if AVAILABLE_MODELS lists that clip. Never guess clip names                        |
+| modelRotate               | `on` or `off`; only shape model; use `off` with motion or animation                                                                                                    |
 
-`background` also accepts `gradient(#05060f, #1b1040, 180deg)` and `image(images/bg.jpg)` (file must exist under `public/`). `theme` cannot be combined with `background`.
+`background` accepts: hex, `gradient(#05060f, #1b1040, 180deg)`, or `image(images/file.jpg)` (png, jpg, webp under public/, only if the file is listed).
 
-Inside a chapter, scenes after the first must NOT set shape, model, animation, animationSpeed, modelRotate, color, background, theme, themeDetail, rotationSpeed, kit, camera, transition or `+` lines. They inherit the world and continue the camera.
+Inside a chapter, scenes after the first must NOT set shape, model, color, background, rotationSpeed, kit, camera, transition or `+` lines. They inherit the world and continue the camera.
 
 ### Beats: timed overlays, one line each
 
@@ -68,17 +68,25 @@ Inside a chapter, scenes after the first must NOT set shape, model, animation, a
 
 Beats in the same slot (title, tag, badge, card) must not overlap in time. camera beats must be in increasing time order and cannot be combined with `cameraTo` in the same scene.
 
-### Motion and pose actions
-
-- `@ 0 motion preset=fall-into from="0,0,0" target="0,0,-6" for=4 turns=2 ease=ease-in` (also `launch`, `fly-to`, `drive`, `orbit`, `float`). Motion lines in a scene must not overlap; use multiple non-overlapping lines for a sequence. `fall-into`, `fly-to`, and `orbit` require `target`. Optional values: `from="x,y,z"`, `ease=linear|ease-in|ease-out|ease-in-out`, `turns=0..20`, `tumble=0..1`, `loop=on|off`.
-- `@ 0 pose style=flail for=3 amount=0.8` (styles: `flail`, `float`, `run`, `wave`). Named limb nodes in GLB files are posed procedurally. Models without named limb nodes emit a warning and use whole-body tumble.
-- `+ planet color=#c1440e radius=2 pos="6,3,-10" ring=on` or `+ blackhole radius=1.2 pos="0,0,-6"` are supported with `theme: space`.
-
 ### Kits
 
 - `kit: layers`: needs 2 to 8 lines `+ layer name="Tile" color=#e9ecef thickness=0.15` (top to bottom, thickness 0.05 to 1, unique names). Actions: `@ 2 explode amount=1.2 for=1.5` (amount 0 to 3), `@ 4 highlight layer="Tile" for=2` (layer must exist). World: 4 wide x 3 deep, centred; suggested camera `5, 3.5, 11`.
 - `kit: road`: optional `+ rain intensity=0.7` and `+ car color=#ff6b6b` (one each). Actions: `@ 0.5 drive to=5 for=4` (x from -8 to 8, car starts at -5), `@ 4 rain intensity=1 for=1.5`. Suggested camera `-10, 2.5, -1.6` (looks along the road).
-- `+` lines only on the first scene of a chapter; kit actions can be on any scene of it.
+- - `+` lines only on the first scene of a chapter; kit actions can be on any scene of it.
+
+### Props (any scene, `theme: space` recommended)
+
+- `+ planet color=#c1440e radius=2 pos="6, 3, -10" ring=on` (radius > 0; ring on/off optional)
+- `+ blackhole radius=1.2 pos="0, 0, -6"` (dark sphere with accretion disk)
+
+### Motion and pose (beat lines, move the scene's main shape or model)
+
+| Line                        | Fields                                                                                                                                                                                        |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@ t motion preset=P for=S` | preset: fall-into, launch, fly-to, drive, orbit, float. `for` required (>= 0.2). Optional: `from="x, y, z"`, `target="x, y, z"`, `ease`, `turns` (0 to 20), `tumble` (0 to 1), `loop=on\|off` |
+| `@ t pose style=P`          | style: flail, float, run, wave. Optional `for`, `amount` (0 to 1). Humanoid models only; others fall back to tumble                                                                           |
+
+Pick by narration: falling into something -> `fall-into` (needs `target`, e.g. the blackhole pos; `from` = start); rocket or launch -> `launch`; travelling to something -> `fly-to` (`from`, `target`); car or vehicle moving -> `drive` (`from`, `target` along X or Z); circling -> `orbit` (`target`, `turns`); weightless or idle -> `float`. `fall-into`, `fly-to`, `orbit` need `target`. Motion fits inside the scene; motion lines must not overlap in time. `motion preset=drive` is NOT the road-kit action `@ t drive to=`. With motion use `modelRotate: off`. If a motion/pose line is rejected on a chapter scene, move it to the scene that owns the object.
 
 ## HARD RULES
 
@@ -86,8 +94,8 @@ Beats in the same slot (title, tag, badge, card) must not overlap in time. camer
 2. First scene: no transition. `transitionDuration` shorter than both neighbours.
 3. Every scene with narration uses `duration: auto`; never write `audio` or `words`.
 4. Beat times and camera beats must fit inside the scene. With `duration: auto`, estimate scene length as words / 2.5 + 0.4 seconds.
-5. `at="x, y, z"` callouts must point near the object (sphere radius 1.4, box 2, torus 1.65, layers within +-2 x, +-1 y, +-1.5 z).
-6. Match motion to narration: falling -> `fall-into`, rocket -> `launch`, car -> `drive`; use `theme: space` for space stories and `theme: farm` for farming.
+5. Never use `animation` unless the clip is listed; otherwise use `motion` and `pose`. Never use `theme` and `background` together.
+6. `at="x, y, z"` callouts must point near the object (sphere radius 1.4, box 2, torus 1.65, layers within +-2 x, +-1 y, +-1.5 z).
 
 ## STYLE (vertical 9:16)
 
@@ -149,5 +157,5 @@ voice: en-US-GuyNeural
 - [ ] No transition on scene 1; chapter scenes after the first have no world keys, camera or transition
 - [ ] Every beat ends inside its scene; same-slot beats do not overlap
 - [ ] Highlighted layer names exist; kit actions match the kit
-- [ ] Models only from AVAILABLE_MODELS; animation names exist in the selected GLB
-- [ ] Motion actions fit the scene and do not overlap; theme and background are not combined
+- [ ] Models only from AVAILABLE_MODELS; `animation` only for listed clips
+- [ ] `theme` XOR `background`; motion has `for`, `target` where required, no time overlap
