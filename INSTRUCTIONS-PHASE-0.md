@@ -47,6 +47,7 @@ Do not invent new keys without adding them to the types, parser and this contrac
 add words (path to a .json under public/, Remotion Caption[] in ms, requires audio, produced by npm run narrate). The contract text currently repeats the “Unknown keys are errors” and “camera” sentences twice, so you can delete the duplicate lines.
 add the beat line syntax @ <seconds> <type> key="value" ... [for=<seconds>]. List the 7 types, their fields and the slot rule.
 add chapter, and add @ <seconds> camera pos="x, y, z" [ease="..."]. Note the 3D at="x, y, z" on callouts.
+tambahkan kit: layers | road, baris + <part> key="value" (layer, rain, car), dan aksi @ <detik> explode | highlight | drive | rain
 
 ## Scope
 
@@ -66,7 +67,8 @@ Won't (v1): web UI, cloud rendering, accounts, timeline editor, custom shaders, 
 - Phase 4: Claude-assisted storyboard generation (`PROMPT.md`), batch render.
 - Phase 5 (optional): output presets (9:16, 16:9), scene presets.
   - Phase 5 done once Studio looks right
-- Phase 6 is next: scene kits (the procedural tile cross-section, and road + rain + car, which needs a car model).
+- Phase 6 DONE scene kits (the procedural tile cross-section, and road + rain + car, which needs a car model).
+- Phase 7 next: generate script through PROMPT.md automation TTS with N8N.
 
 ## Working rules
 
@@ -106,3 +108,4 @@ Phases 4 and 5 need the Studio check from step 2 before they count as done.
 - Chapters: later scenes in a chapter can’t set shape, model, color, background, rotationSpeed, camera or transition. They inherit the world and continue from the previous camera position. A chapter’s scenes must be consecutive.
 - Callouts: use at="x, y, z" for a 3D point or x and y for a screen position, not both. A callout hides when its point is behind the camera.
 - Rule 3 (updated): one <Sequence> per scene, plus one TransitionSeries.Sequence per chapter that holds the single ThreeCanvas.
+- kit bukan shader dan bukan model generatif, hanya geometri prosedural. Semua animasinya fungsi murni dari frame chapter, dan hujan memakai random() dari Remotion dengan seed supaya render selalu sama.

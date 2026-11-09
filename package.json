@@ -49,7 +49,10 @@
     "dev:vertical": "tsx scripts/parse-script.ts storyboard/rainbow-vertical.md src/generated/storyboard.json && remotion studio",
     "render:vertical": "tsx scripts/parse-script.ts storyboard/rainbow-vertical.md src/generated/storyboard.json && remotion render src/index.ts ScriptVideo out/vertical.mp4 --gl=angle",
     "dev:kits": "tsx scripts/parse-script.ts storyboard/kits-vertical.md src/generated/storyboard.json && remotion studio",
-    "render:kits": "tsx scripts/parse-script.ts storyboard/kits-vertical.md src/generated/storyboard.json && remotion render src/index.ts ScriptVideo out/kits.mp4 --gl=angle"
+    "render:kits": "tsx scripts/parse-script.ts storyboard/kits-vertical.md src/generated/storyboard.json && remotion render src/index.ts ScriptVideo out/kits.mp4 --gl=angle",
+    "voice": "tsx scripts/voice.ts",
+    "check": "tsx scripts/parse-script.ts",
+    "make": "tsx scripts/make.ts"
   },
   "allowScripts": {
     "esbuild": false

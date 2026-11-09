@@ -1,0 +1,79 @@
+[
+  {
+    "text": " Millions",
+    "startMs": 100,
+    "endMs": 588,
+    "timestampMs": 344,
+    "confidence": null
+  },
+  {
+    "text": " of",
+    "startMs": 613,
+    "endMs": 700,
+    "timestampMs": 657,
+    "confidence": null
+  },
+  {
+    "text": " drops",
+    "startMs": 725,
+    "endMs": 1050,
+    "timestampMs": 888,
+    "confidence": null
+  },
+  {
+    "text": " together",
+    "startMs": 1075,
+    "endMs": 1513,
+    "timestampMs": 1294,
+    "confidence": null
+  },
+  {
+    "text": " split",
+    "startMs": 1538,
+    "endMs": 1800,
+    "timestampMs": 1669,
+    "confidence": null
+  },
+  {
+    "text": " the",
+    "startMs": 1825,
+    "endMs": 1950,
+    "timestampMs": 1888,
+    "confidence": null
+  },
+  {
+    "text": " sunlight",
+    "startMs": 1963,
+    "endMs": 2400,
+    "timestampMs": 2182,
+    "confidence": null
+  },
+  {
+    "text": " into",
+    "startMs": 2413,
+    "endMs": 2625,
+    "timestampMs": 2519,
+    "confidence": null
+  },
+  {
+    "text": " one",
+    "startMs": 2650,
+    "endMs": 2925,
+    "timestampMs": 2788,
+    "confidence": null
+  },
+  {
+    "text": " big",
+    "startMs": 2950,
+    "endMs": 3163,
+    "timestampMs": 3057,
+    "confidence": null
+  },
+  {
+    "text": " rainbow",
+    "startMs": 3175,
+    "endMs": 3725,
+    "timestampMs": 3450,
+    "confidence": null
+  }
+]

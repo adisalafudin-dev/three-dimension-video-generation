@@ -9,6 +9,7 @@ export const SCENE_KEYS = [
   "color",
   "chapter",
   "kit",
+  "narration",
   "rotationSpeed",
   "camera",
   "cameraTo",
@@ -20,7 +21,7 @@ export const SCENE_KEYS = [
   "audioVolume",
   "words",
 ] as const;
-export const FRONTMATTER_KEYS = ["title", "fps", "width", "height"] as const;
+export const FRONTMATTER_KEYS = ["title", "fps", "width", "height", "voice"] as const;
 
 export const BEAT_TYPES = [
   "title",
@@ -168,8 +169,13 @@ export const BeatSchema = z.discriminatedUnion("type", [
 
 export const SceneSchema = z
   .object({
-    duration: num
-      .refine((n) => n >= 0.1, "must be at least 0.1 seconds")
+    duration: z
+      .string()
+      .transform((s) => (s.trim() === "auto" ? ("auto" as const) : Number(s)))
+      .refine(
+        (v) => v === "auto" || (Number.isFinite(v) && v >= 0.1),
+        'must be a number of at least 0.1 seconds, or "auto" (needs narration)',
+      )
       .optional(),
     shape: z.enum(["box", "sphere", "torus", "model"]).optional(),
     model: z
@@ -185,6 +191,12 @@ export const SceneSchema = z
       .regex(/^[\w-]+$/, "must use letters, digits, - and _ only")
       .optional(),
     kit: z.enum(["layers", "road"]).optional(),
+    narration: z
+      .string()
+      .transform((s) => s.trim().replace(/^"([\s\S]*)"$/, "$1").trim())
+      .refine((t) => t.length > 0, "must not be empty")
+      .refine((t) => t.length <= 400, "must be at most 400 characters (split it into more scenes)")
+      .optional(),
     rotationSpeed: num.optional(),
     camera: vec3.optional(),
     cameraTo: vec3.optional(),
@@ -265,7 +277,18 @@ export const SceneSchema = z
         message: 'has no effect without a transition other than "none"',
       });
     }
-    if (s.audioVolume !== undefined && !s.audio) {
+    if (s.narration && (s.audio || s.words)) {
+      for (const k of ["audio", "words"] as const) {
+        if (s[k]) {
+          ctx.addIssue({
+            code: "custom",
+            path: [k],
+            message: "not allowed with narration (audio and word timings come from npm run voice)",
+          });
+        }
+      }
+    }
+    if (s.audioVolume !== undefined && !s.audio && !s.narration) {
       ctx.addIssue({
         code: "custom",
         path: ["audioVolume"],
@@ -287,6 +310,7 @@ export const FrontmatterSchema = z
     fps: z.number().int().min(1).max(120).optional(),
     width: evenInt().optional(),
     height: evenInt().optional(),
+    voice: z.string().regex(/^[\w-]+$/, "must be an Edge voice name like en-US-GuyNeural").optional(),
   })
   .strict();
 

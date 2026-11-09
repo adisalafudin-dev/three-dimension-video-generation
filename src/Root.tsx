@@ -31,7 +31,15 @@ const ScriptVideoSchema = z.object({
     scenes: z.array(
       z.object({
         title: z.string(),
-        duration: z.number(),
+        duration: z.preprocess(
+      (val) =>
+        typeof val === "string"
+          ? val.trim() === "auto"
+            ? "auto"
+            : Number(val)
+          : val,
+      z.union([z.number(), z.literal("auto")])
+    ),
         shape: z.enum(["box", "sphere", "torus", "model"]),
         model: z.string().optional(),
         color: z.string(),

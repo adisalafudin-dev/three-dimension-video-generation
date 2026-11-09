@@ -47,7 +47,7 @@ export type Beat = { start: number; end: number } & (
 export type SceneData = {
   title: string;
   chapter?: string;
-  duration: number; // seconds
+  duration: number | "auto"; // seconds
   shape: "box" | "sphere" | "torus" | "model";
   model?: string; // path under public/, required when shape is 'model'
   color: string; // ignored for models (they keep their own materials)

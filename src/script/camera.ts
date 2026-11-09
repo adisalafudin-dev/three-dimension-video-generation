@@ -27,7 +27,7 @@ export const buildCameraPoints = (
       (scene.cameraTo
         ? [
             {
-              time: scene.duration,
+              time: scene.duration === "auto" ? 3 : scene.duration ?? 3,
               pos: scene.cameraTo,
               ease: scene.cameraEase,
             },

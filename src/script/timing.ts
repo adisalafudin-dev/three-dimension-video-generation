@@ -1,7 +1,7 @@
 import type { SceneData, Storyboard } from "./types";
 
-export const sceneFrames = (duration: number, fps: number) =>
-  Math.round(duration * fps);
+export const sceneFrames = (duration: number | "auto", fps: number) =>
+  Math.round((duration === "auto" ? 3 : duration) * fps);
 
 // Frames of the entry transition of scene i (0 = hard cut)
 export const enterFrames = (scenes: SceneData[], i: number, fps: number) =>

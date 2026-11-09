@@ -1,0 +1,93 @@
+[
+  {
+    "text": " Water",
+    "startMs": 100,
+    "endMs": 500,
+    "timestampMs": 300,
+    "confidence": null
+  },
+  {
+    "text": " bends",
+    "startMs": 513,
+    "endMs": 788,
+    "timestampMs": 651,
+    "confidence": null
+  },
+  {
+    "text": " the",
+    "startMs": 813,
+    "endMs": 925,
+    "timestampMs": 869,
+    "confidence": null
+  },
+  {
+    "text": " light",
+    "startMs": 950,
+    "endMs": 1200,
+    "timestampMs": 1075,
+    "confidence": null
+  },
+  {
+    "text": " because",
+    "startMs": 1213,
+    "endMs": 1513,
+    "timestampMs": 1363,
+    "confidence": null
+  },
+  {
+    "text": " it",
+    "startMs": 1538,
+    "endMs": 1613,
+    "timestampMs": 1576,
+    "confidence": null
+  },
+  {
+    "text": " travels",
+    "startMs": 1625,
+    "endMs": 2013,
+    "timestampMs": 1819,
+    "confidence": null
+  },
+  {
+    "text": " slower",
+    "startMs": 2038,
+    "endMs": 2400,
+    "timestampMs": 2219,
+    "confidence": null
+  },
+  {
+    "text": " than",
+    "startMs": 2413,
+    "endMs": 2550,
+    "timestampMs": 2482,
+    "confidence": null
+  },
+  {
+    "text": " it",
+    "startMs": 2575,
+    "endMs": 2675,
+    "timestampMs": 2625,
+    "confidence": null
+  },
+  {
+    "text": " does",
+    "startMs": 2700,
+    "endMs": 2925,
+    "timestampMs": 2813,
+    "confidence": null
+  },
+  {
+    "text": " in",
+    "startMs": 2950,
+    "endMs": 3063,
+    "timestampMs": 3007,
+    "confidence": null
+  },
+  {
+    "text": " air",
+    "startMs": 3088,
+    "endMs": 3425,
+    "timestampMs": 3257,
+    "confidence": null
+  }
+]

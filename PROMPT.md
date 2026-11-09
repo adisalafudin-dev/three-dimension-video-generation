@@ -1,133 +1,137 @@
 # PROMPT.md: topic -> storyboard
 
-Paste this whole file into Claude and fill the INPUT block. Output must pass `npm run parse` on the first try.
+Paste this whole file into Claude/Gemini and fill the INPUT block. The answer must pass `npm run check -- <file>.md` on the first try. If it does not, paste the error list back with: "Fix these errors. Output the full corrected storyboard only."
 
 ## INPUT
 
 - TOPIC: {{TOPIC}}
-- TARGET_SECONDS: {{TARGET_SECONDS}} (final video length, default 30)
-- FORMAT: {{FORMAT}} (landscape = 1920x1080, vertical = 1080x1920; default landscape)
-- AVAILABLE_MODELS: {{AVAILABLE_MODELS}} (default: models/duck.glb)
-- AVAILABLE_AUDIO: {{AVAILABLE_AUDIO}} (default: none; list real files only, e.g. audio/scene1.mp3)
+- TARGET_SECONDS: {{TARGET_SECONDS}} (default 40)
+- FORMAT: {{FORMAT}} (vertical = 1080x1920, landscape = 1920x1080; default vertical)
+- VOICE: {{VOICE}} (default en-US-GuyNeural; Indonesian: id-ID-ArdiNeural)
+- AVAILABLE_MODELS: {{AVAILABLE_MODELS}} (default: none; only list real files, e.g. models/duck.glb)
 
 ## TASK
 
-Write a storyboard for TOPIC and a narration script. Use ONLY the keys below. Output exactly two code blocks and nothing else:
-
-1. `storyboard`: the .md file.
-2. `narration`: one numbered line per scene, written to be spoken aloud, about 2.5 words per second.
+Write ONE storyboard for TOPIC. Output exactly one markdown code block and nothing else. Use ONLY the keys below. Audio and word timings are generated later from `narration`, so never write `audio` or `words`.
 
 ## FILE FORMAT
 
-- Start with frontmatter, then one `## Scene title` per scene.
-- Each setting is one line: `- key: value`.
-- Caption is one or more lines starting with `>` (shown on screen).
-- No inline comments (`# ...` would become part of the value). No blank-key lines. No duplicate keys in a scene.
-- Any unknown key is an error.
+- Frontmatter, then one `## Scene title` per scene.
+- Settings: `- key: value`, one per line. Beats and kit lines are indented two spaces under the scene, then the `>` caption.
+- Unknown keys, duplicate keys, inline comments (`# ...`) are errors.
 
-### Frontmatter (all optional)
+### Frontmatter
 
-| Key           | Rule                                                         |
-| ------------- | ------------------------------------------------------------ |
-| title         | text                                                         |
-| fps           | integer 1-120, default 30                                    |
-| width, height | even integers. Landscape: 1920 / 1080. Vertical: 1080 / 1920 |
+`title`, `fps` (30), `width`, `height` (even; vertical 1080x1920), `voice`.
 
-### Scene keys (all optional; defaults in brackets)
+### Scene keys (all optional)
 
-| Key                | Rule                                                                                                                         |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| duration           | seconds, >= 0.1 [3]                                                                                                          |
-| shape              | box, sphere, torus, model [box]                                                                                              |
-| model              | path under public/, .glb or .gltf. Required when shape is model. Not allowed otherwise. Only use files from AVAILABLE_MODELS |
-| color              | hex like #ff6b6b [#ffffff]. Ignored for models                                                                               |
-| rotationSpeed      | number, radians per second [1]                                                                                               |
-| camera             | "x, y, z" start position, 3 numbers [0, 0, 5]. Camera always looks at the origin                                             |
-| cameraTo           | "x, y, z" end position. The camera moves there over the whole scene                                                          |
-| cameraEase         | linear, ease-in, ease-out, ease-in-out [ease-in-out]. Only allowed with cameraTo                                             |
-| background         | hex like #0b1020 [#000000]                                                                                                   |
-| transition         | none, fade, slide, wipe [none]. How THIS scene enters from the previous one. Not allowed on the first scene                  |
-| transitionDuration | seconds, >= 0.1 [0.5]. Only allowed when transition is not none                                                              |
-| audio              | path under public/, .mp3 .wav .m4a .aac .ogg. Only use files from AVAILABLE_AUDIO                                            |
-| audioVolume        | 0 to 1 [1]. Only allowed with audio                                                                                          |
+| Key                  | Rule                                                                                                                          |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| narration            | quoted text spoken aloud, max 400 chars, about 12 to 25 words                                                                 |
+| duration             | seconds >= 0.1, or `auto` (needs narration; = voice length + 0.4s + next transition). Always use `auto` when narration exists |
+| chapter              | name (letters, digits, - \_). Consecutive scenes with the same name share ONE 3D world and a continuous camera                |
+| shape                | box, sphere, torus, model [box]                                                                                               |
+| model                | .glb/.gltf path; required when shape is model; only from AVAILABLE_MODELS                                                     |
+| kit                  | layers or road (replaces shape/model/color/rotationSpeed, which are then forbidden)                                           |
+| color                | hex [#ffffff]; rotationSpeed rad/s [1]; background hex [#000000]                                                              |
+| camera               | "x, y, z" start position [0, 0, 5]; always looks at the origin                                                                |
+| cameraTo, cameraEase | end position over the whole scene; ease linear, ease-in, ease-out, ease-in-out. cameraEase only with cameraTo                 |
+| transition           | none, fade, slide, wipe [none]; how THIS scene enters. Not on the first scene, and only on the FIRST scene of a chapter       |
+| transitionDuration   | seconds [0.5]; only with a transition                                                                                         |
+| audioVolume          | 0 to 1; only with narration                                                                                                   |
 
-## HARD RULES (the parser rejects violations)
+Inside a chapter, scenes after the first must NOT set shape, model, color, background, rotationSpeed, kit, camera, transition or `+` lines. They inherit the world and continue the camera.
 
-1. First scene has no `transition` and no `transitionDuration`.
-2. `transitionDuration` must be shorter than the previous scene AND the scene itself.
-3. A scene's entry transition + the next scene's entry transition must be shorter than the scene.
-4. `cameraEase` only with `cameraTo`. `transitionDuration` only with a transition other than none. `audioVolume` only with `audio`.
-5. `shape: model` requires `model`; `model` requires `shape: model`.
-6. Never invent keys, shapes, transitions or files.
+### Beats: timed overlays, one line each
 
-## TIMING
+`@ <seconds> <type> key="value" ... [for=<seconds>]` (seconds from the scene start; beat must end inside the scene; no `for` = until the scene end). `*word*` inside text is highlighted yellow. Values with spaces need double quotes.
 
-- Video length = sum(scene durations) - sum(transitionDurations). Hit TARGET_SECONDS within about 1 second.
-- Use 5 to 7 scenes for 30s, 3 to 4 seconds minimum per scene.
-- With audio: `duration` >= clip length + NEXT scene's transitionDuration + 0.2. Without clips, estimate clip length as words / 2.5.
+| Type      | Fields                                                               | Slot      |
+| --------- | -------------------------------------------------------------------- | --------- |
+| title     | eyebrow (optional), text                                             | top       |
+| tag       | text                                                                 | top-left  |
+| badge     | text                                                                 | top-right |
+| quote     | text, by (optional)                                                  | card      |
+| stat      | value, label                                                         | card      |
+| checklist | items="a \| b \| c" (1 to 5)                                         | card      |
+| callout   | text + (x, y in screen % OR at="x, y, z" 3D point)                   | free      |
+| camera    | pos="x, y, z", ease (optional): camera arrives at pos at that second | camera    |
 
-## STYLE
+Beats in the same slot (title, tag, badge, card) must not overlap in time. camera beats must be in increasing time order and cannot be combined with `cameraTo` in the same scene.
 
-- Only primitives (box, sphere, torus) and the listed models. No text objects, lights or particles exist.
-- Caption: at most 8 words per line, at most 2 lines. It is not the narration.
-- Vary shape, color, background, camera and transition between scenes. Keep text readable: dark background with a bright shape.
-- Camera distance: z between 4 and 8 for all shapes and models. For vertical, use z 6 to 9.
-- Use `camera` + `cameraTo` for a dolly or orbit move on 1 to 2 scenes at most.
-- Mix transitions; do not use the same one on every scene.
+### Kits
+
+- `kit: layers`: needs 2 to 8 lines `+ layer name="Tile" color=#e9ecef thickness=0.15` (top to bottom, thickness 0.05 to 1, unique names). Actions: `@ 2 explode amount=1.2 for=1.5` (amount 0 to 3), `@ 4 highlight layer="Tile" for=2` (layer must exist). World: 4 wide x 3 deep, centred; suggested camera `5, 3.5, 11`.
+- `kit: road`: optional `+ rain intensity=0.7` and `+ car color=#ff6b6b` (one each). Actions: `@ 0.5 drive to=5 for=4` (x from -8 to 8, car starts at -5), `@ 4 rain intensity=1 for=1.5`. Suggested camera `-10, 2.5, -1.6` (looks along the road).
+- `+` lines only on the first scene of a chapter; kit actions can be on any scene of it.
+
+## HARD RULES
+
+1. Never invent keys, shapes, beat types, kits, transitions or files.
+2. First scene: no transition. `transitionDuration` shorter than both neighbours.
+3. Every scene with narration uses `duration: auto`; never write `audio` or `words`.
+4. Beat times and camera beats must fit inside the scene. With `duration: auto`, estimate scene length as words / 2.5 + 0.4 seconds.
+5. `at="x, y, z"` callouts must point near the object (sphere radius 1.4, box 2, torus 1.65, layers within +-2 x, +-1 y, +-1.5 z).
+
+## STYLE (vertical 9:16)
+
+- Scene count about TARGET_SECONDS / 6. Each scene = one idea.
+- Camera distance z 8 to 12 for shapes (vertical needs about 1.5x the landscape distance). Keep objects centred; the bottom 20% and the caption area (about 68% height) stay clear.
+- Open with a `title` beat (eyebrow + one highlighted word). Use at most 2 beats per scene, and one card per scene.
+- Group 2 to 4 related scenes into a chapter with camera beats for a continuous move; otherwise vary shape, color, background and transition.
+- Dark background, bright object. `>` caption is optional (it defaults to the narration).
 
 ## EXAMPLE (valid)
 
 ```markdown
 ---
-title: Demo
+title: How a Rainbow Forms
 fps: 30
-width: 1920
-height: 1080
+width: 1080
+height: 1920
+voice: en-US-GuyNeural
 ---
 
-## Intro
+## Sunlight
 
-- duration: 5
-- shape: box
-- color: #51cf66
-- rotationSpeed: 1.2
-- camera: 0, 1, 5
-- audio: audio/{{topic}}/scene1.mp3
+- duration: auto
+- shape: sphere
+- color: #ffd43b
+- rotationSpeed: 0.5
+- camera: 0, 0, 9
 - background: #0b1020
-  > Written as a plain text script
+- narration: "Sunlight looks white, but it secretly hides every single color inside."
+  @ 0.3 title eyebrow="KITA BEDAH" text="How a _rainbow_ forms" for=3
+  @ 0 tag text="Physics"
 
-## Spin Faster
+## Into the Drop
 
-- duration: 5
+- chapter: drop
+- duration: auto
 - transition: fade
-- shape: torus
-- color: #4dabf7
-- rotationSpeed: 3
-- camera: 3, 2, 4
-- audio: audio/{{topic}}/scene2.mp3
-- background: #101a30
-  > Change a value, change the scene
+- shape: sphere
+- color: #74c0fc
+- camera: 0, 0, 10.5
+- background: #0b1a33
+- narration: "When a ray enters a raindrop, it slows down and starts to bend."
+  @ 3.5 camera pos="4, 2, 8"
+  @ 0.4 callout text="Light _slows down_" at="0.8, 0.8, 0.9" for=3
 
-## Meet the Duck
+## Bending
 
-- duration: 5
-- transition: wipe
-- shape: model
-- model: models/duck.glb
-- rotationSpeed: 1
-- camera: 0, 1, 8
-- cameraTo: 0, 1, 4
-- cameraEase: ease-in-out
-- audio: audio/{{topic}}/scene3.mp3
-- background: #1a1030
-  > Your own 3D models
+- chapter: drop
+- duration: auto
+- narration: "Water bends the light because it travels slower than it does in air."
+  @ 3.5 camera pos="-4, 1.5, 8"
+  @ 0.5 quote text="Light takes the _fastest_ path, not the shortest." by="Fermat" for=3
 ```
 
 ## SELF-CHECK BEFORE ANSWERING
 
-- [ ] Only listed keys, values in range, hex colors
-- [ ] No transition on scene 1
-- [ ] Every transitionDuration shorter than both neighbours
-- [ ] Total length matches TARGET_SECONDS
-- [ ] Every model and audio path comes from the INPUT lists
-- [ ] Exactly two code blocks: storyboard, narration
+- [ ] Exactly one code block; only listed keys; hex colors
+- [ ] Every narrated scene has `duration: auto`, no `audio`/`words`
+- [ ] No transition on scene 1; chapter scenes after the first have no world keys, camera or transition
+- [ ] Every beat ends inside its scene; same-slot beats do not overlap
+- [ ] Highlighted layer names exist; kit actions match the kit
+- [ ] Models only from AVAILABLE_MODELS

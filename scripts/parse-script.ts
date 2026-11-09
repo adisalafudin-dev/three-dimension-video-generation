@@ -11,6 +11,7 @@ import {
   KIT_ACTIONS_BY_KIT,
 } from "../src/script/schema";
 import { checkBeatOverlaps, parseBeatLine } from "./lib/beats";
+import { narrationPaths, slugOf } from "./lib/narration";
 import { parseKitPartLine, validateKitParts } from "./lib/kits";
 import type { Caption } from "@remotion/captions";
 import type {
@@ -24,11 +25,12 @@ import type {
 import { groupChapters } from "../src/script/chapters";
 import { enterFrames } from "../src/script/timing";
 
-const [input, output] = process.argv.slice(2);
-if (!input || !output) {
-  console.error("Usage: tsx scripts/parse-script.ts <input.md> <output.json>");
+const [input, output = "src/generated/storyboard.json"] = process.argv.slice(2);
+if (!input) {
+  console.error("Usage: tsx scripts/parse-script.ts <input.md> [output.json]   (default output: src/generated/storyboard.json)");
   process.exit(1);
 }
+const slug = slugOf(input);
 
 const errors: string[] = [];
 const fail = (msg: string) => errors.push(msg);
@@ -107,7 +109,18 @@ const blocks = content.split(/^## /m).slice(1); // text before the first "## " i
 if (blocks.length === 0)
   fail('No scenes found (each scene starts with a "## Title" line)');
 
-for (const block of blocks) {
+// A scene's exit transition = the entry transition of the next scene (needed for `duration: auto`)
+const peekExit = (bi: number): number => {
+  const next = blocks[bi + 1];
+  if (!next) return 0;
+  const t = next.match(/^\s*-\s*transition:\s*(\w+)/m)?.[1];
+  if (!t || t === "none") return 0;
+  const d = Number(next.match(/^\s*-\s*transitionDuration:\s*([\d.]+)/m)?.[1]);
+  return Number.isFinite(d) && d > 0 ? d : 0.5;
+};
+const AUTO_PADDING = 0.4; // seconds of silence after the last word
+
+for (const [bi, block] of blocks.entries()) {
   const [rawTitle, ...lines] = block.split(/\r?\n/); // \r?\n: safe on Windows (CRLF)
   const title = rawTitle.trim();
   if (!title) {
@@ -154,24 +167,40 @@ for (const block of blocks) {
     fail(`Scene "${title}": key "model": file not found at public/${s.model}`);
   }
 
-  if (s.audio && !fs.existsSync(path.resolve("public", s.audio))) {
-    fail(`Scene "${title}": key "audio": file not found at public/${s.audio}`);
+  // narration: audio and word timings live at a fixed path, made by `npm run voice`
+  const auto = narrationPaths(slug, bi + 1);
+  const audio = s.narration ? auto.audio : s.audio;
+  const wordsKey = s.narration ? auto.words : s.words;
+  // "auto" is resolved below from the word timings; until then use a large value so beat checks do not misfire
+  let duration = s.duration === "auto" ? 600 : (s.duration ?? 3);
+  const audioMissing = !!audio && !fs.existsSync(path.resolve("public", audio));
+  if (audioMissing) {
+    fail(
+      s.narration
+        ? `Scene "${title}": narration audio is not generated yet (missing public/${audio}): run "npm run voice -- ${input}"`
+        : `Scene "${title}": key "audio": file not found at public/${audio}`,
+    );
+  }
+  if (s.duration === "auto" && !s.narration && !s.words) {
+    fail(`Scene "${title}": key "duration": "auto" needs narration (or words)`);
   }
 
   let words: Caption[] | undefined;
-  if (s.words) {
-    const wordsFile = path.resolve("public", s.words);
+  if (wordsKey) {
+    const wordsFile = path.resolve("public", wordsKey);
     if (!fs.existsSync(wordsFile)) {
-      fail(
-        `Scene "${title}": key "words": file not found at public/${s.words}`,
-      );
+      if (!s.narration || !audioMissing) {
+        fail(
+          `Scene "${title}": ${s.narration ? "narration word timings are missing" : 'key "words": file not found'} at public/${wordsKey}${s.narration ? ` (run "npm run voice -- ${input}")` : ""}`,
+        );
+      }
     } else {
       let json: unknown;
       try {
         json = JSON.parse(fs.readFileSync(wordsFile, "utf8"));
       } catch {
         fail(
-          `Scene "${title}": key "words": public/${s.words} is not valid JSON`,
+          `Scene "${title}": key "words": public/${wordsKey} is not valid JSON`,
         );
       }
       if (json !== undefined) {
@@ -194,7 +223,11 @@ for (const block of blocks) {
             confidence: w.confidence ?? null,
           }));
           const lastEndMs = words[words.length - 1].endMs;
-          const sceneMs = (s.duration ?? 3) * 1000;
+          if (s.duration === "auto") {
+            duration =
+              Math.round((lastEndMs / 1000 + AUTO_PADDING + peekExit(bi)) * 100) / 100;
+          }
+          const sceneMs = duration * 1000;
           if (lastEndMs > sceneMs) {
             fail(
               `Scene "${title}": key "words": the last word ends at ${(lastEndMs / 1000).toFixed(2)}s but the scene is only ${(sceneMs / 1000).toFixed(2)}s long (raise duration)`,
@@ -211,7 +244,7 @@ for (const block of blocks) {
     const parsedBeat = parseBeatLine(
       line,
       title,
-      s.duration ?? 3,
+      duration,
       suggest,
       fail,
     );
@@ -244,11 +277,7 @@ for (const block of blocks) {
 
   if (errors.length > before) continue;
 
-  if (caption.length === 0) {
-    console.warn(
-      `Warning: scene "${title}" has no caption (expected a line starting with ">")`,
-    );
-  }
+  if (caption.length === 0 && s.narration) caption.push(s.narration);
 
   meta.push({
     worldKeys: [
@@ -266,7 +295,7 @@ for (const block of blocks) {
     title,
     chapter: s.chapter,
     kit: s.kit,
-    duration: s.duration ?? 3,
+    duration,
     shape: s.shape ?? "box",
     model: s.model,
     color: s.color ?? "#ffffff",
@@ -276,7 +305,7 @@ for (const block of blocks) {
     cameraEase: s.cameraEase ?? "ease-in-out",
     transition: s.transition ?? "none",
     transitionDuration: s.transitionDuration ?? 0.5,
-    audio: s.audio,
+    audio,
     audioVolume: s.audioVolume ?? 1,
     background: s.background ?? "#000000",
     caption: caption.join("\n"),
@@ -424,10 +453,11 @@ if (errors.length === 0) {
         j === c.scenes.length - 1 && k + 1 < chapters.length
           ? enterFrames(scenes, chapters[k + 1].firstIndex, fps)
           : 0;
+      const d = s.duration === "auto" ? 3 : s.duration;
       const voiceEnd = s.words[s.words.length - 1].endMs / 1000;
-      if (voiceEnd + out / fps > s.duration) {
+      if (voiceEnd + out / fps > d) {
         console.warn(
-          `Warning: scene "${s.title}": the voice ends at ${voiceEnd.toFixed(2)}s and the next transition starts at ${(s.duration - out / fps).toFixed(2)}s (raise duration so the voice is not cut off)`,
+          `Warning: scene "${s.title}": the voice ends at ${voiceEnd.toFixed(2)}s and the next transition starts at ${(d - out / fps).toFixed(2)}s (raise duration so the voice is not cut off)`,
         );
       }
     });
@@ -443,7 +473,9 @@ scenes.forEach((s, i) => {
     );
   }
   if (i > 0 && s.transition !== "none") {
-    const shorter = Math.min(scenes[i - 1].duration, s.duration);
+    const d1 = Number(scenes[i - 1].duration === "auto" ? 3 : scenes[i - 1].duration ?? 3);
+    const d2 = Number(s.duration === "auto" ? 3 : s.duration ?? 3);
+    const shorter = Math.min(d1, d2);
     if (s.transitionDuration >= shorter) {
       fail(
         `Scene "${s.title}": key "transitionDuration": must be shorter than both neighboring scenes (${shorter}s)`,
