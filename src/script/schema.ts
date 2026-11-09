@@ -21,7 +21,13 @@ export const SCENE_KEYS = [
   "audioVolume",
   "words",
 ] as const;
-export const FRONTMATTER_KEYS = ["title", "fps", "width", "height", "voice"] as const;
+export const FRONTMATTER_KEYS = [
+  "title",
+  "fps",
+  "width",
+  "height",
+  "voice",
+] as const;
 
 export const BEAT_TYPES = [
   "title",
@@ -143,7 +149,9 @@ export const BeatSchema = z.discriminatedUnion("type", [
       for: beatFor,
     })
     .strict(),
-  z.object({ type: z.literal("highlight"), layer: beatText, for: beatFor }).strict(),
+  z
+    .object({ type: z.literal("highlight"), layer: beatText, for: beatFor })
+    .strict(),
   z
     .object({
       type: z.literal("drive"),
@@ -193,9 +201,17 @@ export const SceneSchema = z
     kit: z.enum(["layers", "road"]).optional(),
     narration: z
       .string()
-      .transform((s) => s.trim().replace(/^"([\s\S]*)"$/, "$1").trim())
+      .transform((s) =>
+        s
+          .trim()
+          .replace(/^"([\s\S]*)"$/, "$1")
+          .trim(),
+      )
       .refine((t) => t.length > 0, "must not be empty")
-      .refine((t) => t.length <= 400, "must be at most 400 characters (split it into more scenes)")
+      .refine(
+        (t) => t.length <= 400,
+        "must be at most 400 characters (split it into more scenes)",
+      )
       .optional(),
     rotationSpeed: num.optional(),
     camera: vec3.optional(),
@@ -283,7 +299,8 @@ export const SceneSchema = z
           ctx.addIssue({
             code: "custom",
             path: [k],
-            message: "not allowed with narration (audio and word timings come from npm run voice)",
+            message:
+              "not allowed with narration (audio and word timings come from npm run voice)",
           });
         }
       }
@@ -310,7 +327,10 @@ export const FrontmatterSchema = z
     fps: z.number().int().min(1).max(120).optional(),
     width: evenInt().optional(),
     height: evenInt().optional(),
-    voice: z.string().regex(/^[\w-]+$/, "must be an Edge voice name like en-US-GuyNeural").optional(),
+    voice: z
+      .string()
+      .regex(/^[\w-]+$/, "must be an Edge voice name like en-US-GuyNeural")
+      .optional(),
   })
   .strict();
 
@@ -366,7 +386,10 @@ export const KitPartSchema = z.discriminatedUnion("type", [
       type: z.literal("layer"),
       name: beatText,
       color: hexColor,
-      thickness: num.refine((n) => n >= 0.05 && n <= 1, "must be between 0.05 and 1"),
+      thickness: num.refine(
+        (n) => n >= 0.05 && n <= 1,
+        "must be between 0.05 and 1",
+      ),
     })
     .strict(),
   z

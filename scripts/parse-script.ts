@@ -27,7 +27,9 @@ import { enterFrames } from "../src/script/timing";
 
 const [input, output = "src/generated/storyboard.json"] = process.argv.slice(2);
 if (!input) {
-  console.error("Usage: tsx scripts/parse-script.ts <input.md> [output.json]   (default output: src/generated/storyboard.json)");
+  console.error(
+    "Usage: tsx scripts/parse-script.ts <input.md> [output.json]   (default output: src/generated/storyboard.json)",
+  );
   process.exit(1);
 }
 const slug = slugOf(input);
@@ -225,7 +227,9 @@ for (const [bi, block] of blocks.entries()) {
           const lastEndMs = words[words.length - 1].endMs;
           if (s.duration === "auto") {
             duration =
-              Math.round((lastEndMs / 1000 + AUTO_PADDING + peekExit(bi)) * 100) / 100;
+              Math.round(
+                (lastEndMs / 1000 + AUTO_PADDING + peekExit(bi)) * 100,
+              ) / 100;
           }
           const sceneMs = duration * 1000;
           if (lastEndMs > sceneMs) {
@@ -241,13 +245,7 @@ for (const [bi, block] of blocks.entries()) {
   const cameraKeys: CameraKey[] = [];
   const kitActions: KitAction[] = [];
   for (const line of beatLines) {
-    const parsedBeat = parseBeatLine(
-      line,
-      title,
-      duration,
-      suggest,
-      fail,
-    );
+    const parsedBeat = parseBeatLine(line, title, duration, suggest, fail);
     if (parsedBeat?.kind === "beat") beats.push(parsedBeat.beat);
     if (parsedBeat?.kind === "camera") cameraKeys.push(parsedBeat.key);
     if (parsedBeat?.kind === "action") kitActions.push(parsedBeat.action);
@@ -266,7 +264,9 @@ for (const [bi, block] of blocks.entries()) {
     if (part) kitParts.push(part);
   }
   if (partLines.length > 0 && !s.kit) {
-    fail(`Scene "${title}": "+" lines need a "kit" key (kit: layers or kit: road)`);
+    fail(
+      `Scene "${title}": "+" lines need a "kit" key (kit: layers or kit: road)`,
+    );
   }
   if (s.kit) validateKitParts(s.kit, kitParts, title, fail);
   if (cameraKeys.length > 0 && s.cameraTo) {
@@ -473,8 +473,10 @@ scenes.forEach((s, i) => {
     );
   }
   if (i > 0 && s.transition !== "none") {
-    const d1 = Number(scenes[i - 1].duration === "auto" ? 3 : scenes[i - 1].duration ?? 3);
-    const d2 = Number(s.duration === "auto" ? 3 : s.duration ?? 3);
+    const d1 = Number(
+      scenes[i - 1].duration === "auto" ? 3 : (scenes[i - 1].duration ?? 3),
+    );
+    const d2 = Number(s.duration === "auto" ? 3 : (s.duration ?? 3));
     const shorter = Math.min(d1, d2);
     if (s.transitionDuration >= shorter) {
       fail(
