@@ -6,6 +6,9 @@ export const SCENE_KEYS = [
   "duration",
   "shape",
   "model",
+  "animation",
+  "animationSpeed",
+  "modelRotate",
   "color",
   "chapter",
   "kit",
@@ -15,6 +18,8 @@ export const SCENE_KEYS = [
   "cameraTo",
   "cameraEase",
   "background",
+  "theme",
+  "themeDetail",
   "transition",
   "transitionDuration",
   "audio",
@@ -42,6 +47,8 @@ export const BEAT_TYPES = [
   "highlight",
   "drive",
   "rain",
+  "motion",
+  "pose",
 ] as const;
 
 const hexColor = z
@@ -67,6 +74,8 @@ export const BEAT_FIELDS: Record<
   highlight: ["layer", "for"],
   drive: ["to", "for"],
   rain: ["intensity", "for"],
+  motion: ["preset", "target", "from", "for", "ease", "turns", "tumble", "loop"],
+  pose: ["style", "for", "amount"],
 };
 
 const beatText = z.string().min(1, "must not be empty");
@@ -173,6 +182,21 @@ export const BeatSchema = z.discriminatedUnion("type", [
       ease: z.enum(["linear", "ease-in", "ease-out", "ease-in-out"]).optional(),
     })
     .strict(),
+  z.object({
+    type: z.literal("motion"),
+    preset: z.enum(["fall-into", "launch", "fly-to", "drive", "orbit", "float"]),
+    target: vec3.optional(), from: vec3.optional(), for: num.refine((n) => n >= 0.2, "must be at least 0.2 seconds"),
+    ease: z.enum(["linear", "ease-in", "ease-out", "ease-in-out"]).optional(),
+    turns: num.refine((n) => n >= 0 && n <= 20, "must be between 0 and 20").optional(),
+    tumble: num.refine((n) => n >= 0 && n <= 1, "must be between 0 and 1").optional(),
+    loop: z.enum(["on", "off"]).optional(),
+  }).strict(),
+  z.object({
+    type: z.literal("pose"),
+    style: z.enum(["flail", "float", "run", "wave"]),
+    for: beatFor,
+    amount: num.refine((n) => n >= 0 && n <= 1, "must be between 0 and 1").optional(),
+  }).strict(),
 ]);
 
 export const SceneSchema = z
@@ -193,6 +217,9 @@ export const SceneSchema = z
         "must be a .glb or .gltf path under public/, like models/duck.glb",
       )
       .optional(),
+    animation: z.union([z.string().min(1), num.refine((n) => Number.isInteger(n) && n >= 0, "must be a zero-based clip index")]).optional(),
+    animationSpeed: num.refine((n) => n > 0, "must be greater than 0").optional(),
+    modelRotate: z.enum(["on", "off"]).optional(),
     color: hexColor.optional(),
     chapter: z
       .string()
@@ -219,7 +246,9 @@ export const SceneSchema = z
     cameraEase: z
       .enum(["linear", "ease-in", "ease-out", "ease-in-out"])
       .optional(),
-    background: hexColor.optional(),
+    background: z.string().refine((v) => /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(v) || /^gradient\(#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}),\s*#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}),\s*\d+(?:\.\d+)?deg\)$/.test(v) || /^image\([\w./-]+\.(?:png|jpe?g|webp)\)$/i.test(v), "must be a hex color, gradient(#hex, #hex, 180deg), or image(images/file.jpg)").optional(),
+    theme: z.enum(["space", "farm"]).optional(),
+    themeDetail: z.enum(["low", "high"]).optional(),
     transition: z.enum(["none", "fade", "slide", "wipe"]).optional(),
     transitionDuration: num
       .refine((n) => n >= 0.1, "must be at least 0.1 seconds")
@@ -245,7 +274,7 @@ export const SceneSchema = z
   .strict()
   .superRefine((s, ctx) => {
     if (s.kit) {
-      for (const k of ["shape", "model", "color", "rotationSpeed"] as const) {
+      for (const k of ["shape", "model", "animation", "animationSpeed", "modelRotate", "color", "rotationSpeed"] as const) {
         if (s[k] !== undefined) {
           ctx.addIssue({
             code: "custom",
@@ -255,6 +284,8 @@ export const SceneSchema = z
         }
       }
     }
+    if (s.theme && s.background) ctx.addIssue({ code: "custom", path: ["background"], message: 'cannot be combined with "theme"' });
+    if (s.themeDetail && !s.theme) ctx.addIssue({ code: "custom", path: ["themeDetail"], message: 'requires "theme"' });
     if (s.words && !s.audio) {
       ctx.addIssue({
         code: "custom",
@@ -276,6 +307,10 @@ export const SceneSchema = z
         message: 'only used when shape is "model"',
       });
     }
+    for (const k of ["animation", "animationSpeed", "modelRotate"] as const) {
+      if (s[k] !== undefined && s.shape !== "model") ctx.addIssue({ code: "custom", path: [k], message: 'only used when shape is "model"' });
+    }
+    if (s.animationSpeed !== undefined && s.animation === undefined) ctx.addIssue({ code: "custom", path: ["animationSpeed"], message: 'requires an "animation" clip' });
     if (s.cameraEase && !s.cameraTo) {
       ctx.addIssue({
         code: "custom",
@@ -399,4 +434,9 @@ export const KitPartSchema = z.discriminatedUnion("type", [
     })
     .strict(),
   z.object({ type: z.literal("car"), color: hexColor }).strict(),
+]);
+
+export const ScenePropSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("planet"), color: hexColor, radius: num.refine((n) => n > 0, "must be greater than 0"), pos: vec3, ring: z.enum(["on", "off"]).optional() }).strict(),
+  z.object({ type: z.literal("blackhole"), radius: num.refine((n) => n > 0, "must be greater than 0"), pos: vec3 }).strict(),
 ]);

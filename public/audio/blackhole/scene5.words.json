@@ -1,0 +1,79 @@
+[
+  {
+    "text": " Now",
+    "startMs": 100,
+    "endMs": 350,
+    "timestampMs": 225,
+    "confidence": null
+  },
+  {
+    "text": " imagine",
+    "startMs": 363,
+    "endMs": 713,
+    "timestampMs": 538,
+    "confidence": null
+  },
+  {
+    "text": " an",
+    "startMs": 738,
+    "endMs": 825,
+    "timestampMs": 782,
+    "confidence": null
+  },
+  {
+    "text": " astronaut",
+    "startMs": 850,
+    "endMs": 1375,
+    "timestampMs": 1113,
+    "confidence": null
+  },
+  {
+    "text": " falling",
+    "startMs": 1400,
+    "endMs": 1750,
+    "timestampMs": 1575,
+    "confidence": null
+  },
+  {
+    "text": " toward",
+    "startMs": 1763,
+    "endMs": 1988,
+    "timestampMs": 1876,
+    "confidence": null
+  },
+  {
+    "text": " the",
+    "startMs": 2013,
+    "endMs": 2100,
+    "timestampMs": 2057,
+    "confidence": null
+  },
+  {
+    "text": " black",
+    "startMs": 2113,
+    "endMs": 2400,
+    "timestampMs": 2257,
+    "confidence": null
+  },
+  {
+    "text": " hole",
+    "startMs": 2425,
+    "endMs": 2700,
+    "timestampMs": 2563,
+    "confidence": null
+  },
+  {
+    "text": " feet",
+    "startMs": 2888,
+    "endMs": 3100,
+    "timestampMs": 2994,
+    "confidence": null
+  },
+  {
+    "text": " first",
+    "startMs": 3125,
+    "endMs": 3588,
+    "timestampMs": 3357,
+    "confidence": null
+  }
+]

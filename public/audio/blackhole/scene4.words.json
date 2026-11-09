@@ -1,0 +1,107 @@
+[
+  {
+    "text": " Gas",
+    "startMs": 100,
+    "endMs": 413,
+    "timestampMs": 257,
+    "confidence": null
+  },
+  {
+    "text": " swirling",
+    "startMs": 425,
+    "endMs": 863,
+    "timestampMs": 644,
+    "confidence": null
+  },
+  {
+    "text": " around",
+    "startMs": 888,
+    "endMs": 1163,
+    "timestampMs": 1026,
+    "confidence": null
+  },
+  {
+    "text": " it",
+    "startMs": 1175,
+    "endMs": 1250,
+    "timestampMs": 1213,
+    "confidence": null
+  },
+  {
+    "text": " heats",
+    "startMs": 1275,
+    "endMs": 1550,
+    "timestampMs": 1413,
+    "confidence": null
+  },
+  {
+    "text": " up",
+    "startMs": 1575,
+    "endMs": 1713,
+    "timestampMs": 1644,
+    "confidence": null
+  },
+  {
+    "text": " and",
+    "startMs": 1738,
+    "endMs": 1825,
+    "timestampMs": 1782,
+    "confidence": null
+  },
+  {
+    "text": " glows",
+    "startMs": 1850,
+    "endMs": 2275,
+    "timestampMs": 2063,
+    "confidence": null
+  },
+  {
+    "text": " which",
+    "startMs": 2463,
+    "endMs": 2650,
+    "timestampMs": 2557,
+    "confidence": null
+  },
+  {
+    "text": " is",
+    "startMs": 2663,
+    "endMs": 2775,
+    "timestampMs": 2719,
+    "confidence": null
+  },
+  {
+    "text": " how",
+    "startMs": 2800,
+    "endMs": 2938,
+    "timestampMs": 2869,
+    "confidence": null
+  },
+  {
+    "text": " we",
+    "startMs": 2963,
+    "endMs": 3075,
+    "timestampMs": 3019,
+    "confidence": null
+  },
+  {
+    "text": " can",
+    "startMs": 3088,
+    "endMs": 3225,
+    "timestampMs": 3157,
+    "confidence": null
+  },
+  {
+    "text": " spot",
+    "startMs": 3250,
+    "endMs": 3525,
+    "timestampMs": 3388,
+    "confidence": null
+  },
+  {
+    "text": " one",
+    "startMs": 3550,
+    "endMs": 3775,
+    "timestampMs": 3663,
+    "confidence": null
+  }
+]

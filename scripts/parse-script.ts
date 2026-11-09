@@ -13,6 +13,7 @@ import {
 import { checkBeatOverlaps, parseBeatLine } from "./lib/beats";
 import { narrationPaths, slugOf } from "./lib/narration";
 import { parseKitPartLine, validateKitParts } from "./lib/kits";
+import { parseSceneProp } from "./lib/props";
 import type { Caption } from "@remotion/captions";
 import type {
   Beat,
@@ -122,6 +123,36 @@ const peekExit = (bi: number): number => {
 };
 const AUTO_PADDING = 0.4; // seconds of silence after the last word
 
+const readGlbAnimationNames = (file: string): string[] => {
+  const bytes = fs.readFileSync(file);
+  if (bytes.toString("ascii", 0, 4) !== "glTF" || bytes.readUInt32LE(4) !== 2) throw new Error("not a GLB 2.0 file");
+  let offset = 12;
+  while (offset + 8 <= bytes.length) {
+    const length = bytes.readUInt32LE(offset);
+    const type = bytes.readUInt32LE(offset + 4);
+    if (length > bytes.length - offset - 8) throw new Error("invalid GLB chunk length");
+    if (type === 0x4e4f534a) {
+      const json = JSON.parse(bytes.toString("utf8", offset + 8, offset + 8 + length)) as { animations?: { name?: string }[] };
+      return (json.animations ?? []).map((clip, i) => clip.name?.trim() || `Animation ${i}`);
+    }
+    offset += 8 + length;
+  }
+  throw new Error("GLB has no JSON chunk");
+};
+const readGlbNodeNames = (file: string): string[] => {
+  const bytes = fs.readFileSync(file); let offset = 12;
+  while (offset + 8 <= bytes.length) {
+    const length = bytes.readUInt32LE(offset), type = bytes.readUInt32LE(offset + 4);
+    if (length > bytes.length - offset - 8) throw new Error("invalid GLB chunk length");
+    if (type === 0x4e4f534a) {
+      const json = JSON.parse(bytes.toString("utf8", offset + 8, offset + 8 + length)) as { nodes?: { name?: string }[] };
+      return (json.nodes ?? []).flatMap((n) => n.name ? [n.name] : []);
+    }
+    offset += 8 + length;
+  }
+  return [];
+};
+
 for (const [bi, block] of blocks.entries()) {
   const [rawTitle, ...lines] = block.split(/\r?\n/); // \r?\n: safe on Windows (CRLF)
   const title = rawTitle.trim();
@@ -167,6 +198,14 @@ for (const [bi, block] of blocks.entries()) {
 
   if (s.model && !fs.existsSync(path.resolve("public", s.model))) {
     fail(`Scene "${title}": key "model": file not found at public/${s.model}`);
+  }
+  if (s.model && fs.existsSync(path.resolve("public", s.model)) && s.animation !== undefined) {
+    try {
+      if (!/\.glb$/i.test(s.model)) throw new Error("embedded animation lookup requires a .glb file");
+      const names = readGlbAnimationNames(path.resolve("public", s.model));
+      const index = typeof s.animation === "number" ? s.animation : names.indexOf(s.animation);
+      if (index < 0 || index >= names.length) fail(`Scene "${title}": key "animation": clip ${JSON.stringify(s.animation)} not found in ${s.model}${names.length ? ` (available: ${names.join(", ")})` : " (model contains no animation clips)"}`);
+    } catch (error) { fail(`Scene "${title}": key "animation": cannot read clips from ${s.model}: ${error instanceof Error ? error.message : String(error)}`); }
   }
 
   // narration: audio and word timings live at a fixed path, made by `npm run voice`
@@ -244,12 +283,27 @@ for (const [bi, block] of blocks.entries()) {
   const beats: Beat[] = [];
   const cameraKeys: CameraKey[] = [];
   const kitActions: KitAction[] = [];
+  const motion = [];
+  const poses = [];
   for (const line of beatLines) {
     const parsedBeat = parseBeatLine(line, title, duration, suggest, fail);
     if (parsedBeat?.kind === "beat") beats.push(parsedBeat.beat);
     if (parsedBeat?.kind === "camera") cameraKeys.push(parsedBeat.key);
     if (parsedBeat?.kind === "action") kitActions.push(parsedBeat.action);
+    if (parsedBeat?.kind === "motion") motion.push(parsedBeat.motion);
+    if (parsedBeat?.kind === "pose") poses.push(parsedBeat.pose);
   }
+  if (poses.length && s.model && fs.existsSync(path.resolve("public", s.model))) {
+    try {
+      const nodeNames = readGlbNodeNames(path.resolve("public", s.model));
+      const hasLimbs = nodeNames.some((n) => /arm|leg|hand|foot|shoulder|hip|knee/i.test(n));
+      if (!hasLimbs) {
+        console.warn(`Warning: scene "${title}": model has no named limb nodes; pose uses whole-body tumble fallback`);
+        poses.forEach((p) => { p.fallbackTumble = true; });
+      }
+    } catch { console.warn(`Warning: scene "${title}": could not inspect model nodes; pose uses whole-body tumble fallback`); poses.forEach((p) => { p.fallbackTumble = true; }); }
+  }
+  if (poses.length && s.shape !== "model") fail(`Scene "${title}": pose actions require shape: model`);
   checkBeatOverlaps(beats, title, fail);
   for (let k = 1; k < cameraKeys.length; k++) {
     if (cameraKeys[k].time <= cameraKeys[k - 1].time) {
@@ -259,21 +313,32 @@ for (const [bi, block] of blocks.entries()) {
     }
   }
   const kitParts: KitPart[] = [];
+  const props = [];
   for (const line of partLines) {
-    const part = parseKitPartLine(line, title, suggest, fail);
-    if (part) kitParts.push(part);
+    if (/^\+\s*(planet|blackhole)\b/.test(line)) {
+      const prop = parseSceneProp(line, title, fail);
+      if (prop) props.push(prop);
+    } else {
+      const part = parseKitPartLine(line, title, suggest, fail);
+      if (part) kitParts.push(part);
+    }
   }
-  if (partLines.length > 0 && !s.kit) {
+  if (kitParts.length > 0 && !s.kit) {
     fail(
       `Scene "${title}": "+" lines need a "kit" key (kit: layers or kit: road)`,
     );
   }
   if (s.kit) validateKitParts(s.kit, kitParts, title, fail);
+  if (props.length && s.theme !== "space") fail(`Scene "${title}": planet and blackhole props require theme: space`);
+  for (const t of ["planet", "blackhole"] as const) if (props.filter((p) => p.type === t).length > 1) fail(`Scene "${title}": at most one + ${t} prop is allowed`);
   if (cameraKeys.length > 0 && s.cameraTo) {
     fail(
       `Scene "${title}": key "cameraTo" cannot be combined with camera keyframes ("@ <s> camera ...")`,
     );
   }
+  motion.sort((a, b) => a.start - b.start);
+  for (let m = 1; m < motion.length; m++) if (motion[m].start < motion[m - 1].end) fail(`Scene "${title}": motion actions overlap (${motion[m - 1].start}-${motion[m - 1].end}s and ${motion[m].start}-${motion[m].end}s)`);
+  if (s.background?.startsWith("image(") && !fs.existsSync(path.resolve("public", s.background.slice(6, -1)))) fail(`Scene "${title}": background image not found at public/${s.background.slice(6, -1)}`);
 
   if (errors.length > before) continue;
 
@@ -285,7 +350,9 @@ for (const [bi, block] of blocks.entries()) {
       "model",
       "color",
       "background",
+      "theme", "themeDetail",
       "rotationSpeed",
+      "animation", "animationSpeed", "modelRotate",
       "kit",
     ].filter((k) => k in kv),
     camera: "camera" in kv,
@@ -298,6 +365,9 @@ for (const [bi, block] of blocks.entries()) {
     duration,
     shape: s.shape ?? "box",
     model: s.model,
+    animation: s.animation,
+    animationSpeed: s.animationSpeed ?? 1,
+    modelRotate: s.modelRotate !== "off",
     color: s.color ?? "#ffffff",
     rotationSpeed: s.rotationSpeed ?? 1,
     camera: s.camera ?? [0, 0, 5],
@@ -308,6 +378,11 @@ for (const [bi, block] of blocks.entries()) {
     audio,
     audioVolume: s.audioVolume ?? 1,
     background: s.background ?? "#000000",
+    theme: s.theme,
+    themeDetail: s.themeDetail ?? "low",
+    motion,
+    poses,
+    props,
     caption: caption.join("\n"),
     beats: beats.length > 0 ? beats : undefined,
     words,
@@ -357,6 +432,12 @@ if (errors.length === 0) {
     // inherit the world and the camera position from the previous scene
     s.shape = first.shape;
     s.model = first.model;
+    s.animation = first.animation;
+    s.animationSpeed = first.animationSpeed;
+    s.modelRotate = first.modelRotate;
+    s.theme = first.theme;
+    s.themeDetail = first.themeDetail;
+    s.props = first.props;
     s.color = first.color;
     s.background = first.background;
     s.rotationSpeed = first.rotationSpeed;

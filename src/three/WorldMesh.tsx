@@ -5,6 +5,8 @@ import type { SceneData } from "../script/types";
 import { LayersKit } from "./kits/LayersKit";
 import { RoadKit } from "./kits/RoadKit";
 import { ShapeMesh } from "./ShapeMesh";
+import { ThemeProps } from "./ThemeProps";
+import type { MotionAction, PoseAction } from "../script/types";
 
 const CAR_START_X = -5;
 
@@ -12,25 +14,31 @@ const CAR_START_X = -5;
 export const WorldMesh: React.FC<{
   scene: SceneData;
   tracks: ActionTracks;
-}> = ({ scene, tracks }) => {
+  motionTracks?: MotionAction[];
+  poseTracks?: PoseAction[];
+}> = ({ scene, tracks, motionTracks, poseTracks }) => {
   const frame = useCurrentFrame(); // chapter-local
   const { fps } = useVideoConfig();
   const parts = scene.kitParts ?? [];
 
   if (scene.kit === "layers") {
-    return (
+      return (
+      <>
       <LayersKit
         layers={parts.flatMap((p) => (p.type === "layer" ? [p] : []))}
         explode={trackValue(tracks.explode, 0, frame)}
         highlight={highlightAt(tracks.highlights, frame, fps)}
       />
+      <ThemeProps scene={scene} />
+      </>
     );
   }
 
   if (scene.kit === "road") {
     const rainPart = parts.find((p) => p.type === "rain");
     const carPart = parts.find((p) => p.type === "car");
-    return (
+      return (
+      <>
       <RoadKit
         rain={trackValue(
           tracks.rain,
@@ -46,8 +54,10 @@ export const WorldMesh: React.FC<{
             : undefined
         }
       />
+      <ThemeProps scene={scene} />
+      </>
     );
   }
 
-  return <ShapeMesh scene={scene} />;
+  return <><ShapeMesh scene={scene} motionTracks={motionTracks} poseTracks={poseTracks} /><ThemeProps scene={scene} /></>;
 };

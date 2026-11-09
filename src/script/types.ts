@@ -9,6 +9,10 @@ export type TransitionType = "none" | "fade" | "slide" | "wipe";
 export type CameraKey = { time: number; pos: Vec3; ease: CameraEase };
 
 export type KitName = "layers" | "road";
+export type MotionPreset = "fall-into" | "launch" | "fly-to" | "drive" | "orbit" | "float";
+export type MotionAction = { start: number; end: number; preset: MotionPreset; target?: Vec3; from?: Vec3; ease: CameraEase; turns: number; tumble: number; loop: boolean };
+export type PoseAction = { start: number; end: number; style: "flail" | "float" | "run" | "wave"; amount: number; fallbackTumble: boolean };
+export type SceneProp = { type: "planet"; color: string; radius: number; pos: Vec3; ring: boolean } | { type: "blackhole"; radius: number; pos: Vec3 };
 
 // Static parts of a kit ("+ layer name=... color=... thickness=...")
 export type KitPart =
@@ -50,6 +54,9 @@ export type SceneData = {
   duration: number | "auto"; // seconds
   shape: "box" | "sphere" | "torus" | "model";
   model?: string; // path under public/, required when shape is 'model'
+  animation?: string | number; // embedded clip name or zero-based index
+  animationSpeed: number;
+  modelRotate: boolean;
   color: string; // ignored for models (they keep their own materials)
   rotationSpeed: number; // radians per second
   camera: Vec3; // start position (always looks at the origin)
@@ -68,6 +75,11 @@ export type SceneData = {
   kit?: KitName; // procedural 3D world instead of a single shape
   kitParts?: KitPart[];
   kitActions?: KitAction[];
+  theme?: "space" | "farm";
+  themeDetail: "low" | "high";
+  motion: MotionAction[];
+  poses: PoseAction[];
+  props: SceneProp[];
 };
 
 export type Storyboard = {

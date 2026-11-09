@@ -9,6 +9,7 @@ Paste this whole file into Claude/Gemini and fill the INPUT block. The answer mu
 - FORMAT: {{FORMAT}} (vertical = 1080x1920, landscape = 1920x1080; default vertical)
 - VOICE: {{VOICE}} (default en-US-GuyNeural; Indonesian: id-ID-ArdiNeural)
 - AVAILABLE_MODELS: {{AVAILABLE_MODELS}} (default: none; only list real files, e.g. models/duck.glb)
+- MODELS: recommend
 
 ## TASK
 
@@ -33,6 +34,11 @@ Write ONE storyboard for TOPIC. Output exactly one markdown code block and nothi
 | chapter              | name (letters, digits, - \_). Consecutive scenes with the same name share ONE 3D world and a continuous camera                |
 | shape                | box, sphere, torus, model [box]                                                                                               |
 | model                | .glb/.gltf path; required when shape is model; only from AVAILABLE_MODELS                                                     |
+| animation            | embedded clip name or zero-based index; model only; name must match a clip in the GLB                                        |
+| animationSpeed       | positive playback multiplier [1]; requires animation                                                                         |
+| modelRotate          | on/off [on]; model only; off disables the Y-axis turntable                                                                      |
+| theme                | space or farm; chapter background/theme from its first scene                                                                    |
+| themeDetail          | low/high [low]; only with theme                                                                                                 |
 | kit                  | layers or road (replaces shape/model/color/rotationSpeed, which are then forbidden)                                           |
 | color                | hex [#ffffff]; rotationSpeed rad/s [1]; background hex [#000000]                                                              |
 | camera               | "x, y, z" start position [0, 0, 5]; always looks at the origin                                                                |
@@ -41,7 +47,9 @@ Write ONE storyboard for TOPIC. Output exactly one markdown code block and nothi
 | transitionDuration   | seconds [0.5]; only with a transition                                                                                         |
 | audioVolume          | 0 to 1; only with narration                                                                                                   |
 
-Inside a chapter, scenes after the first must NOT set shape, model, color, background, rotationSpeed, kit, camera, transition or `+` lines. They inherit the world and continue the camera.
+`background` also accepts `gradient(#05060f, #1b1040, 180deg)` and `image(images/bg.jpg)` (file must exist under `public/`). `theme` cannot be combined with `background`.
+
+Inside a chapter, scenes after the first must NOT set shape, model, animation, animationSpeed, modelRotate, color, background, theme, themeDetail, rotationSpeed, kit, camera, transition or `+` lines. They inherit the world and continue the camera.
 
 ### Beats: timed overlays, one line each
 
@@ -60,6 +68,12 @@ Inside a chapter, scenes after the first must NOT set shape, model, color, backg
 
 Beats in the same slot (title, tag, badge, card) must not overlap in time. camera beats must be in increasing time order and cannot be combined with `cameraTo` in the same scene.
 
+### Motion and pose actions
+
+- `@ 0 motion preset=fall-into from="0,0,0" target="0,0,-6" for=4 turns=2 ease=ease-in` (also `launch`, `fly-to`, `drive`, `orbit`, `float`). Motion lines in a scene must not overlap; use multiple non-overlapping lines for a sequence. `fall-into`, `fly-to`, and `orbit` require `target`. Optional values: `from="x,y,z"`, `ease=linear|ease-in|ease-out|ease-in-out`, `turns=0..20`, `tumble=0..1`, `loop=on|off`.
+- `@ 0 pose style=flail for=3 amount=0.8` (styles: `flail`, `float`, `run`, `wave`). Named limb nodes in GLB files are posed procedurally. Models without named limb nodes emit a warning and use whole-body tumble.
+- `+ planet color=#c1440e radius=2 pos="6,3,-10" ring=on` or `+ blackhole radius=1.2 pos="0,0,-6"` are supported with `theme: space`.
+
 ### Kits
 
 - `kit: layers`: needs 2 to 8 lines `+ layer name="Tile" color=#e9ecef thickness=0.15` (top to bottom, thickness 0.05 to 1, unique names). Actions: `@ 2 explode amount=1.2 for=1.5` (amount 0 to 3), `@ 4 highlight layer="Tile" for=2` (layer must exist). World: 4 wide x 3 deep, centred; suggested camera `5, 3.5, 11`.
@@ -73,6 +87,7 @@ Beats in the same slot (title, tag, badge, card) must not overlap in time. camer
 3. Every scene with narration uses `duration: auto`; never write `audio` or `words`.
 4. Beat times and camera beats must fit inside the scene. With `duration: auto`, estimate scene length as words / 2.5 + 0.4 seconds.
 5. `at="x, y, z"` callouts must point near the object (sphere radius 1.4, box 2, torus 1.65, layers within +-2 x, +-1 y, +-1.5 z).
+6. Match motion to narration: falling -> `fall-into`, rocket -> `launch`, car -> `drive`; use `theme: space` for space stories and `theme: farm` for farming.
 
 ## STYLE (vertical 9:16)
 
@@ -134,4 +149,5 @@ voice: en-US-GuyNeural
 - [ ] No transition on scene 1; chapter scenes after the first have no world keys, camera or transition
 - [ ] Every beat ends inside its scene; same-slot beats do not overlap
 - [ ] Highlighted layer names exist; kit actions match the kit
-- [ ] Models only from AVAILABLE_MODELS
+- [ ] Models only from AVAILABLE_MODELS; animation names exist in the selected GLB
+- [ ] Motion actions fit the scene and do not overlap; theme and background are not combined

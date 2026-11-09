@@ -1,0 +1,79 @@
+[
+  {
+    "text": " Past",
+    "startMs": 100,
+    "endMs": 438,
+    "timestampMs": 269,
+    "confidence": null
+  },
+  {
+    "text": " the",
+    "startMs": 463,
+    "endMs": 538,
+    "timestampMs": 501,
+    "confidence": null
+  },
+  {
+    "text": " horizon",
+    "startMs": 563,
+    "endMs": 1050,
+    "timestampMs": 807,
+    "confidence": null
+  },
+  {
+    "text": " no",
+    "startMs": 1263,
+    "endMs": 1388,
+    "timestampMs": 1326,
+    "confidence": null
+  },
+  {
+    "text": " one",
+    "startMs": 1400,
+    "endMs": 1550,
+    "timestampMs": 1475,
+    "confidence": null
+  },
+  {
+    "text": " can",
+    "startMs": 1575,
+    "endMs": 1725,
+    "timestampMs": 1650,
+    "confidence": null
+  },
+  {
+    "text": " tell",
+    "startMs": 1750,
+    "endMs": 1950,
+    "timestampMs": 1850,
+    "confidence": null
+  },
+  {
+    "text": " us",
+    "startMs": 1975,
+    "endMs": 2100,
+    "timestampMs": 2038,
+    "confidence": null
+  },
+  {
+    "text": " what",
+    "startMs": 2125,
+    "endMs": 2250,
+    "timestampMs": 2188,
+    "confidence": null
+  },
+  {
+    "text": " happens",
+    "startMs": 2275,
+    "endMs": 2663,
+    "timestampMs": 2469,
+    "confidence": null
+  },
+  {
+    "text": " next",
+    "startMs": 2675,
+    "endMs": 3100,
+    "timestampMs": 2888,
+    "confidence": null
+  }
+]

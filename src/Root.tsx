@@ -42,6 +42,9 @@ const ScriptVideoSchema = z.object({
         ),
         shape: z.enum(["box", "sphere", "torus", "model"]),
         model: z.string().optional(),
+        animation: z.union([z.string(), z.number()]).optional(),
+        animationSpeed: z.number(),
+        modelRotate: z.boolean(),
         color: z.string(),
         rotationSpeed: z.number(),
         camera: z.array(z.number()),
@@ -52,6 +55,11 @@ const ScriptVideoSchema = z.object({
         audio: z.string().optional(),
         audioVolume: z.number(),
         background: z.string(),
+        theme: z.enum(["space", "farm"]).optional(),
+        themeDetail: z.enum(["low", "high"]),
+        motion: z.array(z.object({ start: z.number(), end: z.number(), preset: z.enum(["fall-into", "launch", "fly-to", "drive", "orbit", "float"]), target: z.array(z.number()).optional(), from: z.array(z.number()).optional(), ease: z.enum(["linear", "ease-in", "ease-out", "ease-in-out"]), turns: z.number(), tumble: z.number(), loop: z.boolean() })),
+        poses: z.array(z.object({ start: z.number(), end: z.number(), style: z.enum(["flail", "float", "run", "wave"]), amount: z.number(), fallbackTumble: z.boolean() })),
+        props: z.array(z.discriminatedUnion("type", [z.object({ type: z.literal("planet"), color: z.string(), radius: z.number(), pos: z.array(z.number()), ring: z.boolean() }), z.object({ type: z.literal("blackhole"), radius: z.number(), pos: z.array(z.number()) })])),
         caption: z.string(),
         words: z
           .array(

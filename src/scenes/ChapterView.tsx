@@ -15,12 +15,14 @@ import { KaraokeCaption } from "../ui/KaraokeCaption";
 import { WorldMesh } from "../three/WorldMesh"; // gantikan import ShapeMesh
 // import { ShapeMesh } from "../three/ShapeMesh";
 import { buildActionTracks } from "../script/actions";
+import { Background } from "./Background";
+import type { MotionAction } from "../script/types";
 
 // Audio, beats and caption of one scene. Runs inside the scene's own <Sequence>,
 // so useCurrentFrame() is local to the scene.
 const SceneOverlay: React.FC<{
   scene: SceneData;
-  cam: { points: CameraPoint[]; offset: number };
+  cam: { points: CameraPoint[]; offset: number; motion?: MotionAction[] };
 }> = ({ scene, cam }) => (
   <AbsoluteFill>
     {scene.audio ? (
@@ -44,9 +46,12 @@ export const ChapterView: React.FC<{ chapter: Chapter }> = ({ chapter }) => {
   const world = chapter.scenes[0];
   const points = useMemo(() => buildCameraPoints(chapter, fps), [chapter, fps]);
   const tracks = useMemo(() => buildActionTracks(chapter, fps), [chapter, fps]);
+  const motionTracks = useMemo(() => chapter.scenes.flatMap((scene, j) => scene.motion.map((m) => ({ ...m, start: chapter.offsets[j] / fps + m.start, end: chapter.offsets[j] / fps + m.end }))), [chapter, fps]);
+  const poseTracks = useMemo(() => chapter.scenes.flatMap((scene, j) => scene.poses.map((p) => ({ ...p, start: chapter.offsets[j] / fps + p.start, end: chapter.offsets[j] / fps + p.end }))), [chapter, fps]);
 
   return (
-    <AbsoluteFill style={{ background: world.background }}>
+    <AbsoluteFill>
+      <Background scene={world} />
       <ThreeCanvas
         width={width}
         height={height}
@@ -56,7 +61,7 @@ export const ChapterView: React.FC<{ chapter: Chapter }> = ({ chapter }) => {
         <ambientLight intensity={0.6} />
         <directionalLight position={[5, 5, 5]} intensity={1.5} />
         {/* <ShapeMesh scene={world} /> */}
-        <WorldMesh scene={world} tracks={tracks} />
+        <WorldMesh scene={world} tracks={tracks} motionTracks={motionTracks} poseTracks={poseTracks} />
       </ThreeCanvas>
       {chapter.scenes.map((scene, j) => (
         <Sequence
@@ -68,7 +73,7 @@ export const ChapterView: React.FC<{ chapter: Chapter }> = ({ chapter }) => {
         >
           <SceneOverlay
             scene={scene}
-            cam={{ points, offset: chapter.offsets[j] }}
+            cam={{ points, offset: chapter.offsets[j], motion: scene.motion }}
           />
         </Sequence>
       ))}

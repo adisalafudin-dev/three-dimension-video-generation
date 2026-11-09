@@ -1,0 +1,107 @@
+[
+  {
+    "text": " That",
+    "startMs": 100,
+    "endMs": 350,
+    "timestampMs": 225,
+    "confidence": null
+  },
+  {
+    "text": " crushed",
+    "startMs": 375,
+    "endMs": 688,
+    "timestampMs": 532,
+    "confidence": null
+  },
+  {
+    "text": " core",
+    "startMs": 713,
+    "endMs": 975,
+    "timestampMs": 844,
+    "confidence": null
+  },
+  {
+    "text": " is",
+    "startMs": 1000,
+    "endMs": 1125,
+    "timestampMs": 1063,
+    "confidence": null
+  },
+  {
+    "text": " a",
+    "startMs": 1150,
+    "endMs": 1213,
+    "timestampMs": 1182,
+    "confidence": null
+  },
+  {
+    "text": " black",
+    "startMs": 1225,
+    "endMs": 1513,
+    "timestampMs": 1369,
+    "confidence": null
+  },
+  {
+    "text": " hole",
+    "startMs": 1538,
+    "endMs": 1913,
+    "timestampMs": 1726,
+    "confidence": null
+  },
+  {
+    "text": " Nothing",
+    "startMs": 2788,
+    "endMs": 3238,
+    "timestampMs": 3013,
+    "confidence": null
+  },
+  {
+    "text": " not",
+    "startMs": 3438,
+    "endMs": 3600,
+    "timestampMs": 3519,
+    "confidence": null
+  },
+  {
+    "text": " even",
+    "startMs": 3625,
+    "endMs": 3863,
+    "timestampMs": 3744,
+    "confidence": null
+  },
+  {
+    "text": " light",
+    "startMs": 3888,
+    "endMs": 4175,
+    "timestampMs": 4032,
+    "confidence": null
+  },
+  {
+    "text": " can",
+    "startMs": 4363,
+    "endMs": 4500,
+    "timestampMs": 4432,
+    "confidence": null
+  },
+  {
+    "text": " escape",
+    "startMs": 4525,
+    "endMs": 4875,
+    "timestampMs": 4700,
+    "confidence": null
+  },
+  {
+    "text": " its",
+    "startMs": 4888,
+    "endMs": 5038,
+    "timestampMs": 4963,
+    "confidence": null
+  },
+  {
+    "text": " pull",
+    "startMs": 5050,
+    "endMs": 5425,
+    "timestampMs": 5238,
+    "confidence": null
+  }
+]

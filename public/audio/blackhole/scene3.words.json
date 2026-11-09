@@ -1,0 +1,93 @@
+[
+  {
+    "text": " Its",
+    "startMs": 100,
+    "endMs": 325,
+    "timestampMs": 213,
+    "confidence": null
+  },
+  {
+    "text": " edge",
+    "startMs": 338,
+    "endMs": 550,
+    "timestampMs": 444,
+    "confidence": null
+  },
+  {
+    "text": " is",
+    "startMs": 575,
+    "endMs": 700,
+    "timestampMs": 638,
+    "confidence": null
+  },
+  {
+    "text": " the",
+    "startMs": 725,
+    "endMs": 800,
+    "timestampMs": 763,
+    "confidence": null
+  },
+  {
+    "text": " event",
+    "startMs": 825,
+    "endMs": 1100,
+    "timestampMs": 963,
+    "confidence": null
+  },
+  {
+    "text": " horizon",
+    "startMs": 1125,
+    "endMs": 1600,
+    "timestampMs": 1363,
+    "confidence": null
+  },
+  {
+    "text": " where",
+    "startMs": 1813,
+    "endMs": 1950,
+    "timestampMs": 1882,
+    "confidence": null
+  },
+  {
+    "text": " escaping",
+    "startMs": 1975,
+    "endMs": 2450,
+    "timestampMs": 2213,
+    "confidence": null
+  },
+  {
+    "text": " needs",
+    "startMs": 2475,
+    "endMs": 2713,
+    "timestampMs": 2594,
+    "confidence": null
+  },
+  {
+    "text": " speeds",
+    "startMs": 2738,
+    "endMs": 3100,
+    "timestampMs": 2919,
+    "confidence": null
+  },
+  {
+    "text": " faster",
+    "startMs": 3113,
+    "endMs": 3513,
+    "timestampMs": 3313,
+    "confidence": null
+  },
+  {
+    "text": " than",
+    "startMs": 3538,
+    "endMs": 3675,
+    "timestampMs": 3607,
+    "confidence": null
+  },
+  {
+    "text": " light",
+    "startMs": 3700,
+    "endMs": 4075,
+    "timestampMs": 3888,
+    "confidence": null
+  }
+]

@@ -1,0 +1,93 @@
+[
+  {
+    "text": " Squeeze",
+    "startMs": 100,
+    "endMs": 525,
+    "timestampMs": 313,
+    "confidence": null
+  },
+  {
+    "text": " the",
+    "startMs": 550,
+    "endMs": 650,
+    "timestampMs": 600,
+    "confidence": null
+  },
+  {
+    "text": " whole",
+    "startMs": 675,
+    "endMs": 913,
+    "timestampMs": 794,
+    "confidence": null
+  },
+  {
+    "text": " Earth",
+    "startMs": 938,
+    "endMs": 1113,
+    "timestampMs": 1026,
+    "confidence": null
+  },
+  {
+    "text": " down",
+    "startMs": 1138,
+    "endMs": 1363,
+    "timestampMs": 1251,
+    "confidence": null
+  },
+  {
+    "text": " to",
+    "startMs": 1388,
+    "endMs": 1500,
+    "timestampMs": 1444,
+    "confidence": null
+  },
+  {
+    "text": " a",
+    "startMs": 1525,
+    "endMs": 1600,
+    "timestampMs": 1563,
+    "confidence": null
+  },
+  {
+    "text": " marble",
+    "startMs": 1613,
+    "endMs": 2013,
+    "timestampMs": 1813,
+    "confidence": null
+  },
+  {
+    "text": " and",
+    "startMs": 2263,
+    "endMs": 2350,
+    "timestampMs": 2307,
+    "confidence": null
+  },
+  {
+    "text": " gravity",
+    "startMs": 2375,
+    "endMs": 2813,
+    "timestampMs": 2594,
+    "confidence": null
+  },
+  {
+    "text": " becomes",
+    "startMs": 2838,
+    "endMs": 3225,
+    "timestampMs": 3032,
+    "confidence": null
+  },
+  {
+    "text": " impossibly",
+    "startMs": 3250,
+    "endMs": 3850,
+    "timestampMs": 3550,
+    "confidence": null
+  },
+  {
+    "text": " strong",
+    "startMs": 3875,
+    "endMs": 4363,
+    "timestampMs": 4119,
+    "confidence": null
+  }
+]

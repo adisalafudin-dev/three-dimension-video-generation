@@ -1,12 +1,14 @@
 import { BEAT_FIELDS, BEAT_TYPES, BeatSchema } from "../../src/script/schema";
-import type { Beat, CameraKey, KitAction } from "../../src/script/types";
+import type { Beat, CameraKey, KitAction, MotionAction, PoseAction } from "../../src/script/types";
 
 type Suggest = (key: string, known: readonly string[]) => string | null;
 type Fail = (msg: string) => void;
 export type ParsedBeat =
   | { kind: "beat"; beat: Beat }
   | { kind: "camera"; key: CameraKey }
-  | { kind: "action"; action: KitAction };
+  | { kind: "action"; action: KitAction }
+  | { kind: "motion"; motion: MotionAction }
+  | { kind: "pose"; pose: PoseAction };
 
 const ACTION_TYPES = ["explode", "highlight", "drive", "rain"] as const;
 
@@ -103,6 +105,31 @@ export const parseBeatLine = (
       kind: "camera",
       key: { time: start, pos: data.pos, ease: data.ease ?? "ease-in-out" },
     };
+  }
+
+  if (data.type === "motion") {
+    if (["fall-into", "fly-to", "orbit"].includes(data.preset) && !data.target) {
+      fail(`${where}: preset "${data.preset}" requires target="x,y,z"`);
+      return null;
+    }
+    const end = start + data.for;
+    if (start >= sceneDuration || end > sceneDuration + 1e-6) {
+      fail(`${where}: motion from ${start}s to ${end.toFixed(2)}s exceeds scene length (${sceneDuration}s)`);
+      return null;
+    }
+    return { kind: "motion", motion: {
+      start, end, preset: data.preset, target: data.target, from: data.from,
+      ease: data.ease ?? "ease-in-out", turns: data.turns ?? 1,
+      tumble: data.tumble ?? 0, loop: data.loop === "on",
+    } };
+  }
+  if (data.type === "pose") {
+    const end = start + (data.for ?? sceneDuration - start);
+    if (start >= sceneDuration || end > sceneDuration + 1e-6) {
+      fail(`${where}: pose ends at ${end.toFixed(2)}s but scene length is ${sceneDuration}s`);
+      return null;
+    }
+    return { kind: "pose", pose: { start, end, style: data.style, amount: data.amount ?? 1, fallbackTumble: false } };
   }
 
   // Callout needs a position: screen (x and y) or a 3D point (at), not both

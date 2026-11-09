@@ -10,7 +10,7 @@ import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 
 const Duck: React.FC<{ rotationY: number }> = ({ rotationY }) => {
-  const { scene } = useGLTF(staticFile("models/duck.glb"));
+  const { scene } = useGLTF(staticFile("models/earth.glb"));
 
   // Normalize any model to ~2.5 units and center it at the origin
   const { object, scale, offset } = useMemo(() => {

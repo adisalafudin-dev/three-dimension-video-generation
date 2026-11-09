@@ -2,6 +2,8 @@ import * as THREE from "three";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
 import { cameraAt } from "../../script/camera";
 import type { Beat } from "../../script/types";
+import type { MotionAction } from "../../script/types";
+import { motionAt } from "../../script/motion";
 import type { CameraPoint } from "../../script/camera";
 import {
   ACCENT,
@@ -12,7 +14,7 @@ import {
   useUnit,
 } from "./shared";
 
-type Cam = { points: CameraPoint[]; offset: number }; // chapter camera path + this scene's start frame
+type Cam = { points: CameraPoint[]; offset: number; motion?: MotionAction[] }; // chapter camera path + this scene's start frame
 type Props = {
   beat: Beat;
   durationInFrames: number;
@@ -301,12 +303,15 @@ const Callout: React.FC<Props> = ({
   cam,
 }) => {
   const { u, width, height } = useUnit();
+  const { fps } = useVideoConfig();
   const m = useBeatMotion(localFrame, durationInFrames);
   if (beat.type !== "callout") return null;
   let cx = ((beat.x ?? 50) / 100) * width;
   let cy = ((beat.y ?? 50) / 100) * height;
   if (beat.at && cam) {
-    const p = projectToScreen(beat.at, cam, sceneFrame, width, height);
+    const movement = motionAt(cam.motion ?? [], sceneFrame, fps);
+    const local = new THREE.Vector3(...beat.at).multiply(new THREE.Vector3(...movement.scale)).applyEuler(new THREE.Euler(...movement.rotation)).add(new THREE.Vector3(...movement.position));
+    const p = projectToScreen([local.x, local.y, local.z], cam, sceneFrame, width, height);
     if (!p.visible) return null; // behind the camera
     cx = p.x;
     cy = p.y;
