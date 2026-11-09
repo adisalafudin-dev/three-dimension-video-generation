@@ -42,14 +42,16 @@ Write ONE storyboard for TOPIC. Output exactly one markdown code block and nothi
 | transition                | none, fade, slide, wipe [none]; how THIS scene enters. Not on the first scene, and only on the FIRST scene of a chapter                                                |
 | transitionDuration        | seconds [0.5]; only with a transition                                                                                                                                  |
 | audioVolume               | 0 to 1; only with narration                                                                                                                                            |
-| theme                     | `space` or `farm`: full procedural background (replaces `background`; cannot combine). Pick from TOPIC: astronomy, black hole, rocket -> space; farming, crops -> farm |
-| themeDetail               | `low` or `high` [low]; only with theme                                                                                                                                 |
+| theme                     | `space`, `farm`, `city`, `ocean`, `forest`, `desert`, `indoor`, `lab`, or `highway`; one environment per chapter; cannot combine with `background`              |
+| time                      | `dawn`, `day` [default], `dusk`, `night`; requires theme; ignored with warning for space, lab, indoor                                                                |
+| weather                   | `clear` [default], `rain`, `fog`, `snow`, `dust`; requires theme; ignored with warning for space, lab, indoor                                                          |
+| themeDetail               | `low` or `high` [low]; only with theme; controls scenery and particle density                                                                                        |
 | animation, animationSpeed | embedded clip name (or 0-based index) and speed > 0 [1]; only shape model, and ONLY if AVAILABLE_MODELS lists that clip. Never guess clip names                        |
 | modelRotate               | `on` or `off`; only shape model; use `off` with motion or animation                                                                                                    |
 
 `background` accepts: hex, `gradient(#05060f, #1b1040, 180deg)`, or `image(images/file.jpg)` (png, jpg, webp under public/, only if the file is listed).
 
-Inside a chapter, scenes after the first must NOT set shape, model, color, background, rotationSpeed, kit, camera, transition or `+` lines. They inherit the world and continue the camera.
+Inside a chapter, scenes after the first must NOT set shape, model, color, background, theme, themeDetail, time, weather, rotationSpeed, kit, camera, transition or `+` lines. They inherit the world and continue the camera.
 
 ### Beats: timed overlays, one line each
 
@@ -88,13 +90,15 @@ Beats in the same slot (title, tag, badge, card) must not overlap in time. camer
 
 Pick by narration: falling into something -> `fall-into` (needs `target`, e.g. the blackhole pos; `from` = start); rocket or launch -> `launch`; travelling to something -> `fly-to` (`from`, `target`); car or vehicle moving -> `drive` (`from`, `target` along X or Z); circling -> `orbit` (`target`, `turns`); weightless or idle -> `float`. `fall-into`, `fly-to`, `orbit` need `target`. Motion fits inside the scene; motion lines must not overlap in time. `motion preset=drive` is NOT the road-kit action `@ t drive to=`. With motion use `modelRotate: off`. If a motion/pose line is rejected on a chapter scene, move it to the scene that owns the object.
 
+Choose an environment from the topic and set it only on the chapter's first scene: flood in a city -> `theme: city`, `time: dusk`, `weather: rain`; farming -> `theme: farm`, `time: dawn`, `weather: clear`; cars driving in rain -> `theme: highway`, `time: dusk`, `weather: rain`; ocean at sunset -> `theme: ocean`, `time: dusk`; black hole -> `theme: space`. Other useful pairings: `forest` for woodland, `desert` for arid settings, `indoor` for rooms, and `lab` for science demonstrations. `theme: highway` with `kit: road` reuses the road kit's rain field.
+
 ## HARD RULES
 
 1. Never invent keys, shapes, beat types, kits, transitions or files.
 2. First scene: no transition. `transitionDuration` shorter than both neighbours.
 3. Every scene with narration uses `duration: auto`; never write `audio` or `words`.
 4. Beat times and camera beats must fit inside the scene. With `duration: auto`, estimate scene length as words / 2.5 + 0.4 seconds.
-5. Never use `animation` unless the clip is listed; otherwise use `motion` and `pose`. Never use `theme` and `background` together.
+5. Never use `animation` unless the clip is listed; otherwise use `motion` and `pose`. Never use `theme` and `background` together. Keep one environment per chapter.
 6. `at="x, y, z"` callouts must point near the object (sphere radius 1.4, box 2, torus 1.65, layers within +-2 x, +-1 y, +-1.5 z).
 
 ## STYLE (vertical 9:16)

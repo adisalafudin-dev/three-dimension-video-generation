@@ -1,93 +1,121 @@
 [
   {
-    "text": " Gravity",
+    "text": " Eventually",
     "startMs": 100,
-    "endMs": 575,
-    "timestampMs": 338,
+    "endMs": 763,
+    "timestampMs": 432,
     "confidence": null
   },
   {
-    "text": " pulls",
-    "startMs": 600,
-    "endMs": 900,
-    "timestampMs": 750,
+    "text": " classical",
+    "startMs": 938,
+    "endMs": 1438,
+    "timestampMs": 1188,
     "confidence": null
   },
   {
-    "text": " harder",
-    "startMs": 925,
-    "endMs": 1275,
-    "timestampMs": 1100,
-    "confidence": null
-  },
-  {
-    "text": " on",
-    "startMs": 1300,
-    "endMs": 1400,
-    "timestampMs": 1350,
-    "confidence": null
-  },
-  {
-    "text": " the",
-    "startMs": 1425,
-    "endMs": 1525,
-    "timestampMs": 1475,
-    "confidence": null
-  },
-  {
-    "text": " feet",
-    "startMs": 1550,
+    "text": " physics",
+    "startMs": 1463,
     "endMs": 1838,
-    "timestampMs": 1694,
+    "timestampMs": 1651,
     "confidence": null
   },
   {
-    "text": " stretching",
-    "startMs": 2075,
-    "endMs": 2513,
-    "timestampMs": 2294,
+    "text": " predicts",
+    "startMs": 1850,
+    "endMs": 2250,
+    "timestampMs": 2050,
     "confidence": null
   },
   {
     "text": " you",
-    "startMs": 2538,
-    "endMs": 2650,
-    "timestampMs": 2594,
+    "startMs": 2275,
+    "endMs": 2400,
+    "timestampMs": 2338,
     "confidence": null
   },
   {
-    "text": " thin",
-    "startMs": 2675,
-    "endMs": 3088,
-    "timestampMs": 2882,
+    "text": " reach",
+    "startMs": 2425,
+    "endMs": 2638,
+    "timestampMs": 2532,
     "confidence": null
   },
   {
-    "text": " Scientists",
-    "startMs": 3963,
-    "endMs": 4750,
-    "timestampMs": 4357,
+    "text": " the",
+    "startMs": 2663,
+    "endMs": 2788,
+    "timestampMs": 2726,
     "confidence": null
   },
   {
-    "text": " call",
-    "startMs": 4775,
-    "endMs": 5038,
-    "timestampMs": 4907,
+    "text": " singularity",
+    "startMs": 2800,
+    "endMs": 3513,
+    "timestampMs": 3157,
     "confidence": null
   },
   {
-    "text": " it",
-    "startMs": 5050,
-    "endMs": 5138,
-    "timestampMs": 5094,
+    "text": " where",
+    "startMs": 3800,
+    "endMs": 3975,
+    "timestampMs": 3888,
     "confidence": null
   },
   {
-    "text": " spaghettification",
-    "startMs": 5163,
-    "endMs": 6238,
-    "timestampMs": 5701,
+    "text": " matter",
+    "startMs": 3988,
+    "endMs": 4325,
+    "timestampMs": 4157,
+    "confidence": null
+  },
+  {
+    "text": " is",
+    "startMs": 4350,
+    "endMs": 4475,
+    "timestampMs": 4413,
+    "confidence": null
+  },
+  {
+    "text": " compressed",
+    "startMs": 4488,
+    "endMs": 4988,
+    "timestampMs": 4738,
+    "confidence": null
+  },
+  {
+    "text": " into",
+    "startMs": 5013,
+    "endMs": 5213,
+    "timestampMs": 5113,
+    "confidence": null
+  },
+  {
+    "text": " an",
+    "startMs": 5238,
+    "endMs": 5325,
+    "timestampMs": 5282,
+    "confidence": null
+  },
+  {
+    "text": " incredibly",
+    "startMs": 5338,
+    "endMs": 5938,
+    "timestampMs": 5638,
+    "confidence": null
+  },
+  {
+    "text": " tiny",
+    "startMs": 5963,
+    "endMs": 6288,
+    "timestampMs": 6126,
+    "confidence": null
+  },
+  {
+    "text": " region",
+    "startMs": 6300,
+    "endMs": 6713,
+    "timestampMs": 6507,
     "confidence": null
   }
 ]

@@ -17,6 +17,8 @@ import { WorldMesh } from "../three/WorldMesh"; // gantikan import ShapeMesh
 import { buildActionTracks } from "../script/actions";
 import { Background } from "./Background";
 import type { MotionAction } from "../script/types";
+import { EnvironmentRig } from "../three/environment/EnvironmentRig";
+import { environmentFor } from "../three/environment/environmentFor";
 
 // Audio, beats and caption of one scene. Runs inside the scene's own <Sequence>,
 // so useCurrentFrame() is local to the scene.
@@ -48,6 +50,7 @@ export const ChapterView: React.FC<{ chapter: Chapter }> = ({ chapter }) => {
   const tracks = useMemo(() => buildActionTracks(chapter, fps), [chapter, fps]);
   const motionTracks = useMemo(() => chapter.scenes.flatMap((scene, j) => scene.motion.map((m) => ({ ...m, start: chapter.offsets[j] / fps + m.start, end: chapter.offsets[j] / fps + m.end }))), [chapter, fps]);
   const poseTracks = useMemo(() => chapter.scenes.flatMap((scene, j) => scene.poses.map((p) => ({ ...p, start: chapter.offsets[j] / fps + p.start, end: chapter.offsets[j] / fps + p.end }))), [chapter, fps]);
+  const environment = world.theme ? environmentFor(world.theme, world.time, world.weather, world.themeDetail) : null;
 
   return (
     <AbsoluteFill>
@@ -55,11 +58,11 @@ export const ChapterView: React.FC<{ chapter: Chapter }> = ({ chapter }) => {
       <ThreeCanvas
         width={width}
         height={height}
+        shadows={environment?.shadows ?? false}
         camera={{ position: world.camera, fov: 50, near: 0.1, far: 100 }}
       >
         <CameraRig points={points} />
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[5, 5, 5]} intensity={1.5} />
+        {environment ? <EnvironmentRig scene={world} reuseRoadRain={world.theme === "highway" && world.kit === "road"} /> : <><ambientLight intensity={0.6} /><directionalLight position={[5, 5, 5]} intensity={1.5} /></>}
         {/* <ShapeMesh scene={world} /> */}
         <WorldMesh scene={world} tracks={tracks} motionTracks={motionTracks} poseTracks={poseTracks} />
       </ThreeCanvas>

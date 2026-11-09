@@ -1,107 +1,107 @@
 [
   {
-    "text": " That",
+    "text": " As",
     "startMs": 100,
-    "endMs": 350,
-    "timestampMs": 225,
+    "endMs": 313,
+    "timestampMs": 207,
     "confidence": null
   },
   {
-    "text": " crushed",
-    "startMs": 375,
-    "endMs": 688,
-    "timestampMs": 532,
+    "text": " you",
+    "startMs": 338,
+    "endMs": 438,
+    "timestampMs": 388,
     "confidence": null
   },
   {
-    "text": " core",
-    "startMs": 713,
-    "endMs": 975,
-    "timestampMs": 844,
+    "text": " approach",
+    "startMs": 463,
+    "endMs": 950,
+    "timestampMs": 707,
     "confidence": null
   },
   {
-    "text": " is",
-    "startMs": 1000,
-    "endMs": 1125,
-    "timestampMs": 1063,
+    "text": " gravity",
+    "startMs": 1175,
+    "endMs": 1575,
+    "timestampMs": 1375,
     "confidence": null
   },
   {
-    "text": " a",
-    "startMs": 1150,
-    "endMs": 1213,
-    "timestampMs": 1182,
+    "text": " becomes",
+    "startMs": 1600,
+    "endMs": 1975,
+    "timestampMs": 1788,
     "confidence": null
   },
   {
-    "text": " black",
-    "startMs": 1225,
-    "endMs": 1513,
-    "timestampMs": 1369,
+    "text": " incredibly",
+    "startMs": 2000,
+    "endMs": 2600,
+    "timestampMs": 2300,
     "confidence": null
   },
   {
-    "text": " hole",
-    "startMs": 1538,
-    "endMs": 1913,
-    "timestampMs": 1726,
+    "text": " powerful",
+    "startMs": 2613,
+    "endMs": 3138,
+    "timestampMs": 2876,
     "confidence": null
   },
   {
-    "text": " Nothing",
-    "startMs": 2788,
-    "endMs": 3238,
-    "timestampMs": 3013,
+    "text": " pulling",
+    "startMs": 3325,
+    "endMs": 3650,
+    "timestampMs": 3488,
     "confidence": null
   },
   {
-    "text": " not",
-    "startMs": 3438,
-    "endMs": 3600,
-    "timestampMs": 3519,
+    "text": " everything",
+    "startMs": 3663,
+    "endMs": 4050,
+    "timestampMs": 3857,
     "confidence": null
   },
   {
-    "text": " even",
-    "startMs": 3625,
-    "endMs": 3863,
-    "timestampMs": 3744,
+    "text": " around",
+    "startMs": 4075,
+    "endMs": 4375,
+    "timestampMs": 4225,
     "confidence": null
   },
   {
-    "text": " light",
-    "startMs": 3888,
-    "endMs": 4175,
-    "timestampMs": 4032,
-    "confidence": null
-  },
-  {
-    "text": " can",
-    "startMs": 4363,
+    "text": " you",
+    "startMs": 4388,
     "endMs": 4500,
-    "timestampMs": 4432,
+    "timestampMs": 4444,
     "confidence": null
   },
   {
-    "text": " escape",
+    "text": " toward",
     "startMs": 4525,
-    "endMs": 4875,
-    "timestampMs": 4700,
+    "endMs": 4763,
+    "timestampMs": 4644,
     "confidence": null
   },
   {
     "text": " its",
-    "startMs": 4888,
-    "endMs": 5038,
-    "timestampMs": 4963,
+    "startMs": 4788,
+    "endMs": 4938,
+    "timestampMs": 4863,
     "confidence": null
   },
   {
-    "text": " pull",
-    "startMs": 5050,
-    "endMs": 5425,
-    "timestampMs": 5238,
+    "text": " dark",
+    "startMs": 4963,
+    "endMs": 5188,
+    "timestampMs": 5076,
+    "confidence": null
+  },
+  {
+    "text": " center",
+    "startMs": 5213,
+    "endMs": 5638,
+    "timestampMs": 5426,
     "confidence": null
   }
 ]

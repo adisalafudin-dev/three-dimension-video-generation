@@ -20,6 +20,8 @@ export const SCENE_KEYS = [
   "background",
   "theme",
   "themeDetail",
+  "time",
+  "weather",
   "transition",
   "transitionDuration",
   "audio",
@@ -247,8 +249,10 @@ export const SceneSchema = z
       .enum(["linear", "ease-in", "ease-out", "ease-in-out"])
       .optional(),
     background: z.string().refine((v) => /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(v) || /^gradient\(#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}),\s*#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}),\s*\d+(?:\.\d+)?deg\)$/.test(v) || /^image\([\w./-]+\.(?:png|jpe?g|webp)\)$/i.test(v), "must be a hex color, gradient(#hex, #hex, 180deg), or image(images/file.jpg)").optional(),
-    theme: z.enum(["space", "farm"]).optional(),
+    theme: z.enum(["space", "farm", "city", "ocean", "forest", "desert", "indoor", "lab", "highway"]).optional(),
     themeDetail: z.enum(["low", "high"]).optional(),
+    time: z.enum(["dawn", "day", "dusk", "night"]).optional(),
+    weather: z.enum(["clear", "rain", "fog", "snow", "dust"]).optional(),
     transition: z.enum(["none", "fade", "slide", "wipe"]).optional(),
     transitionDuration: num
       .refine((n) => n >= 0.1, "must be at least 0.1 seconds")
@@ -286,6 +290,8 @@ export const SceneSchema = z
     }
     if (s.theme && s.background) ctx.addIssue({ code: "custom", path: ["background"], message: 'cannot be combined with "theme"' });
     if (s.themeDetail && !s.theme) ctx.addIssue({ code: "custom", path: ["themeDetail"], message: 'requires "theme"' });
+    if (s.time && !s.theme) ctx.addIssue({ code: "custom", path: ["time"], message: 'requires "theme"' });
+    if (s.weather && !s.theme) ctx.addIssue({ code: "custom", path: ["weather"], message: 'requires "theme"' });
     if (s.words && !s.audio) {
       ctx.addIssue({
         code: "custom",

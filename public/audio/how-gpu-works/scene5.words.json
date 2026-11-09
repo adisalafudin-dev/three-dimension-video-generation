@@ -1,0 +1,114 @@
+[
+  {
+    "text": " Kipas",
+    "startMs": 100,
+    "endMs": 450,
+    "timestampMs": 275,
+    "confidence": null
+  },
+  {
+    "text": " membantu",
+    "startMs": 450,
+    "endMs": 813,
+    "timestampMs": 632,
+    "confidence": null
+  },
+  {
+    "text": " membuang",
+    "startMs": 813,
+    "endMs": 1138,
+    "timestampMs": 976,
+    "confidence": null
+  },
+  {
+    "text": " panas",
+    "startMs": 1138,
+    "endMs": 1513,
+    "timestampMs": 1326,
+    "confidence": null
+  },
+  {
+    "text": " saat",
+    "startMs": 1513,
+    "endMs": 1738,
+    "timestampMs": 1626,
+    "confidence": null
+  },
+  {
+    "text": " beban",
+    "startMs": 1738,
+    "endMs": 2013,
+    "timestampMs": 1876,
+    "confidence": null
+  },
+  {
+    "text": " meningkat",
+    "startMs": 2013,
+    "endMs": 2600,
+    "timestampMs": 2307,
+    "confidence": null
+  },
+  {
+    "text": " CPU",
+    "startMs": 3450,
+    "endMs": 3825,
+    "timestampMs": 3638,
+    "confidence": null
+  },
+  {
+    "text": " tetap",
+    "startMs": 3825,
+    "endMs": 4075,
+    "timestampMs": 3950,
+    "confidence": null
+  },
+  {
+    "text": " mengatur",
+    "startMs": 4075,
+    "endMs": 4363,
+    "timestampMs": 4219,
+    "confidence": null
+  },
+  {
+    "text": " program",
+    "startMs": 4363,
+    "endMs": 4925,
+    "timestampMs": 4644,
+    "confidence": null
+  },
+  {
+    "text": " sementara",
+    "startMs": 5225,
+    "endMs": 5675,
+    "timestampMs": 5450,
+    "confidence": null
+  },
+  {
+    "text": " GPU",
+    "startMs": 5675,
+    "endMs": 6088,
+    "timestampMs": 5882,
+    "confidence": null
+  },
+  {
+    "text": " memproses",
+    "startMs": 6088,
+    "endMs": 6538,
+    "timestampMs": 6313,
+    "confidence": null
+  },
+  {
+    "text": " tugas",
+    "startMs": 6538,
+    "endMs": 6863,
+    "timestampMs": 6701,
+    "confidence": null
+  },
+  {
+    "text": " paralel",
+    "startMs": 6863,
+    "endMs": 7488,
+    "timestampMs": 7176,
+    "confidence": null
+  }
+]

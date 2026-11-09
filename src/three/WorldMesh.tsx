@@ -7,6 +7,7 @@ import { RoadKit } from "./kits/RoadKit";
 import { ShapeMesh } from "./ShapeMesh";
 import { ThemeProps } from "./ThemeProps";
 import type { MotionAction, PoseAction } from "../script/types";
+import { EnvironmentWorld } from "./environment/EnvironmentWorld";
 
 const CAR_START_X = -5;
 
@@ -30,6 +31,7 @@ export const WorldMesh: React.FC<{
         highlight={highlightAt(tracks.highlights, frame, fps)}
       />
       <ThemeProps scene={scene} />
+      <EnvironmentWorld scene={scene} />
       </>
     );
   }
@@ -42,7 +44,7 @@ export const WorldMesh: React.FC<{
       <RoadKit
         rain={trackValue(
           tracks.rain,
-          rainPart && rainPart.type === "rain" ? rainPart.intensity : 0,
+          rainPart && rainPart.type === "rain" ? rainPart.intensity : scene.theme === "highway" && scene.weather === "rain" ? 0.55 : 0,
           frame,
         )}
         car={
@@ -55,9 +57,10 @@ export const WorldMesh: React.FC<{
         }
       />
       <ThemeProps scene={scene} />
+      <EnvironmentWorld scene={scene} />
       </>
     );
   }
 
-  return <><ShapeMesh scene={scene} motionTracks={motionTracks} poseTracks={poseTracks} /><ThemeProps scene={scene} /></>;
+  return <><ShapeMesh scene={scene} motionTracks={motionTracks} poseTracks={poseTracks} /><ThemeProps scene={scene} /><EnvironmentWorld scene={scene} /></>;
 };

@@ -1,0 +1,100 @@
+[
+  {
+    "text": " Saat",
+    "startMs": 100,
+    "endMs": 425,
+    "timestampMs": 263,
+    "confidence": null
+  },
+  {
+    "text": " gim",
+    "startMs": 425,
+    "endMs": 588,
+    "timestampMs": 507,
+    "confidence": null
+  },
+  {
+    "text": " berjalan",
+    "startMs": 588,
+    "endMs": 1238,
+    "timestampMs": 913,
+    "confidence": null
+  },
+  {
+    "text": " GPU",
+    "startMs": 1538,
+    "endMs": 1975,
+    "timestampMs": 1757,
+    "confidence": null
+  },
+  {
+    "text": " harus",
+    "startMs": 1975,
+    "endMs": 2188,
+    "timestampMs": 2082,
+    "confidence": null
+  },
+  {
+    "text": " menyusun",
+    "startMs": 2188,
+    "endMs": 2525,
+    "timestampMs": 2357,
+    "confidence": null
+  },
+  {
+    "text": " jutaan",
+    "startMs": 2525,
+    "endMs": 2850,
+    "timestampMs": 2688,
+    "confidence": null
+  },
+  {
+    "text": " piksel",
+    "startMs": 2850,
+    "endMs": 3200,
+    "timestampMs": 3025,
+    "confidence": null
+  },
+  {
+    "text": " menjadi",
+    "startMs": 3200,
+    "endMs": 3500,
+    "timestampMs": 3350,
+    "confidence": null
+  },
+  {
+    "text": " frame",
+    "startMs": 3500,
+    "endMs": 3850,
+    "timestampMs": 3675,
+    "confidence": null
+  },
+  {
+    "text": " yang",
+    "startMs": 3850,
+    "endMs": 3988,
+    "timestampMs": 3919,
+    "confidence": null
+  },
+  {
+    "text": " terlihat",
+    "startMs": 3988,
+    "endMs": 4375,
+    "timestampMs": 4182,
+    "confidence": null
+  },
+  {
+    "text": " di",
+    "startMs": 4375,
+    "endMs": 4475,
+    "timestampMs": 4425,
+    "confidence": null
+  },
+  {
+    "text": " layar",
+    "startMs": 4475,
+    "endMs": 4988,
+    "timestampMs": 4732,
+    "confidence": null
+  }
+]

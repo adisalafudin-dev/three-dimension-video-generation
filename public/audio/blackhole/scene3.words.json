@@ -1,93 +1,128 @@
 [
   {
-    "text": " Its",
+    "text": " Your",
     "startMs": 100,
-    "endMs": 325,
-    "timestampMs": 213,
+    "endMs": 313,
+    "timestampMs": 207,
     "confidence": null
   },
   {
-    "text": " edge",
+    "text": " feet",
     "startMs": 338,
-    "endMs": 550,
-    "timestampMs": 444,
+    "endMs": 538,
+    "timestampMs": 438,
     "confidence": null
   },
   {
-    "text": " is",
-    "startMs": 575,
-    "endMs": 700,
-    "timestampMs": 638,
+    "text": " experience",
+    "startMs": 563,
+    "endMs": 1163,
+    "timestampMs": 863,
     "confidence": null
   },
   {
-    "text": " the",
-    "startMs": 725,
-    "endMs": 800,
-    "timestampMs": 763,
+    "text": " stronger",
+    "startMs": 1188,
+    "endMs": 1638,
+    "timestampMs": 1413,
     "confidence": null
   },
   {
-    "text": " event",
-    "startMs": 825,
-    "endMs": 1100,
-    "timestampMs": 963,
-    "confidence": null
-  },
-  {
-    "text": " horizon",
-    "startMs": 1125,
-    "endMs": 1600,
-    "timestampMs": 1363,
-    "confidence": null
-  },
-  {
-    "text": " where",
-    "startMs": 1813,
-    "endMs": 1950,
-    "timestampMs": 1882,
-    "confidence": null
-  },
-  {
-    "text": " escaping",
-    "startMs": 1975,
-    "endMs": 2450,
-    "timestampMs": 2213,
-    "confidence": null
-  },
-  {
-    "text": " needs",
-    "startMs": 2475,
-    "endMs": 2713,
-    "timestampMs": 2594,
-    "confidence": null
-  },
-  {
-    "text": " speeds",
-    "startMs": 2738,
-    "endMs": 3100,
-    "timestampMs": 2919,
-    "confidence": null
-  },
-  {
-    "text": " faster",
-    "startMs": 3113,
-    "endMs": 3513,
-    "timestampMs": 3313,
+    "text": " gravity",
+    "startMs": 1663,
+    "endMs": 2088,
+    "timestampMs": 1876,
     "confidence": null
   },
   {
     "text": " than",
-    "startMs": 3538,
-    "endMs": 3675,
-    "timestampMs": 3607,
+    "startMs": 2113,
+    "endMs": 2263,
+    "timestampMs": 2188,
     "confidence": null
   },
   {
-    "text": " light",
-    "startMs": 3700,
-    "endMs": 4075,
-    "timestampMs": 3888,
+    "text": " your",
+    "startMs": 2288,
+    "endMs": 2438,
+    "timestampMs": 2363,
+    "confidence": null
+  },
+  {
+    "text": " head",
+    "startMs": 2463,
+    "endMs": 2725,
+    "timestampMs": 2594,
+    "confidence": null
+  },
+  {
+    "text": " stretching",
+    "startMs": 2988,
+    "endMs": 3400,
+    "timestampMs": 3194,
+    "confidence": null
+  },
+  {
+    "text": " your",
+    "startMs": 3425,
+    "endMs": 3563,
+    "timestampMs": 3494,
+    "confidence": null
+  },
+  {
+    "text": " body",
+    "startMs": 3588,
+    "endMs": 3900,
+    "timestampMs": 3744,
+    "confidence": null
+  },
+  {
+    "text": " like",
+    "startMs": 3925,
+    "endMs": 4100,
+    "timestampMs": 4013,
+    "confidence": null
+  },
+  {
+    "text": " an",
+    "startMs": 4113,
+    "endMs": 4200,
+    "timestampMs": 4157,
+    "confidence": null
+  },
+  {
+    "text": " incredibly",
+    "startMs": 4225,
+    "endMs": 4788,
+    "timestampMs": 4507,
+    "confidence": null
+  },
+  {
+    "text": " long",
+    "startMs": 4800,
+    "endMs": 5075,
+    "timestampMs": 4938,
+    "confidence": null
+  },
+  {
+    "text": " strand",
+    "startMs": 5088,
+    "endMs": 5413,
+    "timestampMs": 5251,
+    "confidence": null
+  },
+  {
+    "text": " of",
+    "startMs": 5425,
+    "endMs": 5500,
+    "timestampMs": 5463,
+    "confidence": null
+  },
+  {
+    "text": " spaghetti",
+    "startMs": 5525,
+    "endMs": 6125,
+    "timestampMs": 5825,
     "confidence": null
   }
 ]

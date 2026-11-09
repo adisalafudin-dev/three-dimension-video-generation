@@ -1,79 +1,114 @@
 [
   {
-    "text": " Now",
+    "text": " To",
     "startMs": 100,
-    "endMs": 350,
-    "timestampMs": 225,
-    "confidence": null
-  },
-  {
-    "text": " imagine",
-    "startMs": 363,
-    "endMs": 713,
-    "timestampMs": 538,
+    "endMs": 225,
+    "timestampMs": 163,
     "confidence": null
   },
   {
     "text": " an",
-    "startMs": 738,
-    "endMs": 825,
-    "timestampMs": 782,
+    "startMs": 238,
+    "endMs": 325,
+    "timestampMs": 282,
     "confidence": null
   },
   {
-    "text": " astronaut",
-    "startMs": 850,
-    "endMs": 1375,
-    "timestampMs": 1113,
+    "text": " outside",
+    "startMs": 350,
+    "endMs": 738,
+    "timestampMs": 544,
     "confidence": null
   },
   {
-    "text": " falling",
-    "startMs": 1400,
-    "endMs": 1750,
-    "timestampMs": 1575,
+    "text": " observer",
+    "startMs": 750,
+    "endMs": 1200,
+    "timestampMs": 975,
     "confidence": null
   },
   {
-    "text": " toward",
-    "startMs": 1763,
-    "endMs": 1988,
-    "timestampMs": 1876,
+    "text": " your",
+    "startMs": 1413,
+    "endMs": 1538,
+    "timestampMs": 1476,
     "confidence": null
   },
   {
-    "text": " the",
-    "startMs": 2013,
-    "endMs": 2100,
-    "timestampMs": 2057,
+    "text": " movements",
+    "startMs": 1550,
+    "endMs": 1950,
+    "timestampMs": 1750,
     "confidence": null
   },
   {
-    "text": " black",
-    "startMs": 2113,
-    "endMs": 2400,
-    "timestampMs": 2257,
+    "text": " appear",
+    "startMs": 1975,
+    "endMs": 2275,
+    "timestampMs": 2125,
     "confidence": null
   },
   {
-    "text": " hole",
-    "startMs": 2425,
-    "endMs": 2700,
-    "timestampMs": 2563,
+    "text": " slower",
+    "startMs": 2288,
+    "endMs": 2663,
+    "timestampMs": 2476,
     "confidence": null
   },
   {
-    "text": " feet",
-    "startMs": 2888,
-    "endMs": 3100,
-    "timestampMs": 2994,
+    "text": " and",
+    "startMs": 2675,
+    "endMs": 2750,
+    "timestampMs": 2713,
     "confidence": null
   },
   {
-    "text": " first",
-    "startMs": 3125,
-    "endMs": 3588,
-    "timestampMs": 3357,
+    "text": " your",
+    "startMs": 2775,
+    "endMs": 2900,
+    "timestampMs": 2838,
+    "confidence": null
+  },
+  {
+    "text": " light",
+    "startMs": 2925,
+    "endMs": 3150,
+    "timestampMs": 3038,
+    "confidence": null
+  },
+  {
+    "text": " becomes",
+    "startMs": 3163,
+    "endMs": 3538,
+    "timestampMs": 3351,
+    "confidence": null
+  },
+  {
+    "text": " increasingly",
+    "startMs": 3563,
+    "endMs": 4188,
+    "timestampMs": 3876,
+    "confidence": null
+  },
+  {
+    "text": " redshifted",
+    "startMs": 4213,
+    "endMs": 4750,
+    "timestampMs": 4482,
+    "confidence": null
+  },
+  {
+    "text": " and",
+    "startMs": 4775,
+    "endMs": 4875,
+    "timestampMs": 4825,
+    "confidence": null
+  },
+  {
+    "text": " faint",
+    "startMs": 4900,
+    "endMs": 5338,
+    "timestampMs": 5119,
     "confidence": null
   }
 ]

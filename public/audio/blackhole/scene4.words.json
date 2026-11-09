@@ -1,107 +1,100 @@
 [
   {
-    "text": " Gas",
+    "text": " Eventually",
     "startMs": 100,
-    "endMs": 413,
-    "timestampMs": 257,
+    "endMs": 775,
+    "timestampMs": 438,
     "confidence": null
   },
   {
-    "text": " swirling",
-    "startMs": 425,
-    "endMs": 863,
-    "timestampMs": 644,
+    "text": " you",
+    "startMs": 1038,
+    "endMs": 1138,
+    "timestampMs": 1088,
     "confidence": null
   },
   {
-    "text": " around",
-    "startMs": 888,
-    "endMs": 1163,
-    "timestampMs": 1026,
+    "text": " cross",
+    "startMs": 1163,
+    "endMs": 1475,
+    "timestampMs": 1319,
     "confidence": null
   },
   {
-    "text": " it",
-    "startMs": 1175,
-    "endMs": 1250,
-    "timestampMs": 1213,
+    "text": " the",
+    "startMs": 1500,
+    "endMs": 1600,
+    "timestampMs": 1550,
     "confidence": null
   },
   {
-    "text": " heats",
-    "startMs": 1275,
-    "endMs": 1550,
-    "timestampMs": 1413,
+    "text": " event",
+    "startMs": 1625,
+    "endMs": 1925,
+    "timestampMs": 1775,
     "confidence": null
   },
   {
-    "text": " up",
-    "startMs": 1575,
-    "endMs": 1713,
-    "timestampMs": 1644,
+    "text": " horizon",
+    "startMs": 1950,
+    "endMs": 2538,
+    "timestampMs": 2244,
     "confidence": null
   },
   {
-    "text": " and",
-    "startMs": 1738,
-    "endMs": 1825,
-    "timestampMs": 1782,
+    "text": " Beyond",
+    "startMs": 3413,
+    "endMs": 3813,
+    "timestampMs": 3613,
     "confidence": null
   },
   {
-    "text": " glows",
-    "startMs": 1850,
-    "endMs": 2275,
-    "timestampMs": 2063,
+    "text": " this",
+    "startMs": 3838,
+    "endMs": 4000,
+    "timestampMs": 3919,
     "confidence": null
   },
   {
-    "text": " which",
-    "startMs": 2463,
-    "endMs": 2650,
-    "timestampMs": 2557,
+    "text": " invisible",
+    "startMs": 4013,
+    "endMs": 4563,
+    "timestampMs": 4288,
     "confidence": null
   },
   {
-    "text": " is",
-    "startMs": 2663,
-    "endMs": 2775,
-    "timestampMs": 2719,
+    "text": " boundary",
+    "startMs": 4588,
+    "endMs": 5063,
+    "timestampMs": 4826,
     "confidence": null
   },
   {
-    "text": " how",
-    "startMs": 2800,
-    "endMs": 2938,
-    "timestampMs": 2869,
+    "text": " escaping",
+    "startMs": 5375,
+    "endMs": 5838,
+    "timestampMs": 5607,
     "confidence": null
   },
   {
-    "text": " we",
-    "startMs": 2963,
-    "endMs": 3075,
-    "timestampMs": 3019,
+    "text": " becomes",
+    "startMs": 5850,
+    "endMs": 6225,
+    "timestampMs": 6038,
     "confidence": null
   },
   {
-    "text": " can",
-    "startMs": 3088,
-    "endMs": 3225,
-    "timestampMs": 3157,
+    "text": " physically",
+    "startMs": 6250,
+    "endMs": 6738,
+    "timestampMs": 6494,
     "confidence": null
   },
   {
-    "text": " spot",
-    "startMs": 3250,
-    "endMs": 3525,
-    "timestampMs": 3388,
-    "confidence": null
-  },
-  {
-    "text": " one",
-    "startMs": 3550,
-    "endMs": 3775,
-    "timestampMs": 3663,
+    "text": " impossible",
+    "startMs": 6750,
+    "endMs": 7463,
+    "timestampMs": 7107,
     "confidence": null
   }
 ]

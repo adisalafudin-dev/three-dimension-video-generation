@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { useMemo } from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import type { SceneData } from "../script/types";
+import { environmentFor } from "./environment/environmentFor";
 
 const Planet: React.FC<{ color: string; radius: number; pos: [number, number, number]; ring: boolean }> = ({ color, radius, pos, ring }) => <group position={pos}>
   <mesh><sphereGeometry args={[radius, 48, 32]} /><meshStandardMaterial color={color} roughness={0.8} /></mesh>
@@ -17,7 +18,7 @@ const Blackhole: React.FC<{ radius: number; pos: [number, number, number] }> = (
   </group>;
 };
 
-const Farm: React.FC<{ detail: "low" | "high" }> = ({ detail }) => {
+const Farm: React.FC<{ detail: "low" | "high"; roughness: number }> = ({ detail, roughness }) => {
   const frame = useCurrentFrame(); const { fps } = useVideoConfig();
   const count = detail === "high" ? 90 : 42;
   const crops = useMemo(() => {
@@ -33,7 +34,7 @@ const Farm: React.FC<{ detail: "low" | "high" }> = ({ detail }) => {
     return mesh;
   }, [count, frame, fps]);
   return <group>
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, -3]}><planeGeometry args={[24, 20]} /><meshStandardMaterial color="#4e8b34" /></mesh>
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, -3]}><planeGeometry args={[24, 20]} /><meshStandardMaterial color="#4e8b34" roughness={roughness} metalness={roughness < 0.5 ? 0.22 : 0} /></mesh>
     <primitive object={crops} />
     <group position={[3.6, 0, -4]}><mesh position={[0, 1.1, 0]}><boxGeometry args={[2.6, 2, 2]} /><meshStandardMaterial color="#a83f2b" /></mesh><mesh position={[0, 2.35, 0]} rotation={[0, Math.PI / 4, 0]}><coneGeometry args={[1.95, 1.1, 4]} /><meshStandardMaterial color="#642820" /></mesh></group>
     {[-5, 5].map(x => <group key={x} position={[x, 0, -3]}><mesh position={[0, 2, 0]}><sphereGeometry args={[0.9, 12, 8]} /><meshStandardMaterial color="#3d7d37" /></mesh><mesh position={[0, 0.7, 0]}><cylinderGeometry args={[0.12, 0.2, 1.4, 8]} /><meshStandardMaterial color="#6b4528" /></mesh></group>)}
@@ -42,7 +43,10 @@ const Farm: React.FC<{ detail: "low" | "high" }> = ({ detail }) => {
   </group>;
 };
 
-export const ThemeProps: React.FC<{ scene: SceneData }> = ({ scene }) => <>
-  {scene.theme === "farm" ? <Farm detail={scene.themeDetail} /> : null}
+export const ThemeProps: React.FC<{ scene: SceneData }> = ({ scene }) => {
+  const env = environmentFor(scene.theme ?? "lab", scene.time, scene.weather, scene.themeDetail);
+  return <>
+  {scene.theme === "farm" ? <Farm detail={scene.themeDetail} roughness={env.groundRoughness} /> : null}
   {scene.props.map((prop, i) => prop.type === "planet" ? <Planet key={i} {...prop} /> : <Blackhole key={i} {...prop} />)}
 </>;
+};

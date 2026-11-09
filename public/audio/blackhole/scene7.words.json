@@ -1,79 +1,142 @@
 [
   {
-    "text": " Past",
+    "text": " But",
     "startMs": 100,
-    "endMs": 438,
-    "timestampMs": 269,
+    "endMs": 263,
+    "timestampMs": 182,
+    "confidence": null
+  },
+  {
+    "text": " here's",
+    "startMs": 288,
+    "endMs": 525,
+    "timestampMs": 407,
     "confidence": null
   },
   {
     "text": " the",
-    "startMs": 463,
-    "endMs": 538,
-    "timestampMs": 501,
+    "startMs": 550,
+    "endMs": 638,
+    "timestampMs": 594,
     "confidence": null
   },
   {
-    "text": " horizon",
-    "startMs": 563,
-    "endMs": 1050,
-    "timestampMs": 807,
+    "text": " mystery",
+    "startMs": 650,
+    "endMs": 1088,
+    "timestampMs": 869,
     "confidence": null
   },
   {
-    "text": " no",
-    "startMs": 1263,
-    "endMs": 1388,
-    "timestampMs": 1326,
+    "text": " scientists",
+    "startMs": 1288,
+    "endMs": 1863,
+    "timestampMs": 1576,
     "confidence": null
   },
   {
-    "text": " one",
-    "startMs": 1400,
-    "endMs": 1550,
-    "timestampMs": 1475,
+    "text": " still",
+    "startMs": 1888,
+    "endMs": 2113,
+    "timestampMs": 2001,
     "confidence": null
   },
   {
-    "text": " can",
-    "startMs": 1575,
-    "endMs": 1725,
-    "timestampMs": 1650,
+    "text": " don't",
+    "startMs": 2138,
+    "endMs": 2338,
+    "timestampMs": 2238,
     "confidence": null
   },
   {
-    "text": " tell",
-    "startMs": 1750,
-    "endMs": 1950,
-    "timestampMs": 1850,
+    "text": " know",
+    "startMs": 2350,
+    "endMs": 2488,
+    "timestampMs": 2419,
     "confidence": null
   },
   {
-    "text": " us",
-    "startMs": 1975,
-    "endMs": 2100,
-    "timestampMs": 2038,
+    "text": " exactly",
+    "startMs": 2500,
+    "endMs": 3000,
+    "timestampMs": 2750,
     "confidence": null
   },
   {
     "text": " what",
-    "startMs": 2125,
-    "endMs": 2250,
-    "timestampMs": 2188,
+    "startMs": 3013,
+    "endMs": 3150,
+    "timestampMs": 3082,
     "confidence": null
   },
   {
     "text": " happens",
-    "startMs": 2275,
-    "endMs": 2663,
-    "timestampMs": 2469,
+    "startMs": 3175,
+    "endMs": 3550,
+    "timestampMs": 3363,
     "confidence": null
   },
   {
-    "text": " next",
-    "startMs": 2675,
-    "endMs": 3100,
-    "timestampMs": 2888,
+    "text": " inside",
+    "startMs": 3575,
+    "endMs": 4025,
+    "timestampMs": 3800,
+    "confidence": null
+  },
+  {
+    "text": " because",
+    "startMs": 4300,
+    "endMs": 4613,
+    "timestampMs": 4457,
+    "confidence": null
+  },
+  {
+    "text": " we",
+    "startMs": 4638,
+    "endMs": 4738,
+    "timestampMs": 4688,
+    "confidence": null
+  },
+  {
+    "text": " need",
+    "startMs": 4763,
+    "endMs": 4925,
+    "timestampMs": 4844,
+    "confidence": null
+  },
+  {
+    "text": " a",
+    "startMs": 4950,
+    "endMs": 5000,
+    "timestampMs": 4975,
+    "confidence": null
+  },
+  {
+    "text": " theory",
+    "startMs": 5013,
+    "endMs": 5338,
+    "timestampMs": 5176,
+    "confidence": null
+  },
+  {
+    "text": " of",
+    "startMs": 5363,
+    "endMs": 5450,
+    "timestampMs": 5407,
+    "confidence": null
+  },
+  {
+    "text": " quantum",
+    "startMs": 5475,
+    "endMs": 5813,
+    "timestampMs": 5644,
+    "confidence": null
+  },
+  {
+    "text": " gravity",
+    "startMs": 5838,
+    "endMs": 6388,
+    "timestampMs": 6113,
     "confidence": null
   }
 ]

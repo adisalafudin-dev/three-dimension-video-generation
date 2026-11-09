@@ -1,0 +1,107 @@
+[
+  {
+    "text": " GPU",
+    "startMs": 113,
+    "endMs": 525,
+    "timestampMs": 319,
+    "confidence": null
+  },
+  {
+    "text": " menjalankan",
+    "startMs": 525,
+    "endMs": 1063,
+    "timestampMs": 794,
+    "confidence": null
+  },
+  {
+    "text": " banyak",
+    "startMs": 1063,
+    "endMs": 1325,
+    "timestampMs": 1194,
+    "confidence": null
+  },
+  {
+    "text": " perhitungan",
+    "startMs": 1325,
+    "endMs": 1775,
+    "timestampMs": 1550,
+    "confidence": null
+  },
+  {
+    "text": " serentak",
+    "startMs": 1775,
+    "endMs": 2300,
+    "timestampMs": 2038,
+    "confidence": null
+  },
+  {
+    "text": " unit-unitnya",
+    "startMs": 2550,
+    "endMs": 3225,
+    "timestampMs": 2888,
+    "confidence": null
+  },
+  {
+    "text": " mengolah",
+    "startMs": 3225,
+    "endMs": 3563,
+    "timestampMs": 3394,
+    "confidence": null
+  },
+  {
+    "text": " warna",
+    "startMs": 3563,
+    "endMs": 4100,
+    "timestampMs": 3832,
+    "confidence": null
+  },
+  {
+    "text": " tekstur",
+    "startMs": 4350,
+    "endMs": 4950,
+    "timestampMs": 4650,
+    "confidence": null
+  },
+  {
+    "text": " dan",
+    "startMs": 5163,
+    "endMs": 5388,
+    "timestampMs": 5276,
+    "confidence": null
+  },
+  {
+    "text": " cahaya",
+    "startMs": 5388,
+    "endMs": 5775,
+    "timestampMs": 5582,
+    "confidence": null
+  },
+  {
+    "text": " pada",
+    "startMs": 5775,
+    "endMs": 5963,
+    "timestampMs": 5869,
+    "confidence": null
+  },
+  {
+    "text": " bagian",
+    "startMs": 5963,
+    "endMs": 6338,
+    "timestampMs": 6151,
+    "confidence": null
+  },
+  {
+    "text": " gambar",
+    "startMs": 6338,
+    "endMs": 6650,
+    "timestampMs": 6494,
+    "confidence": null
+  },
+  {
+    "text": " berbeda",
+    "startMs": 6650,
+    "endMs": 7300,
+    "timestampMs": 6975,
+    "confidence": null
+  }
+]

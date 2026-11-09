@@ -1,0 +1,86 @@
+[
+  {
+    "text": " CPU",
+    "startMs": 113,
+    "endMs": 463,
+    "timestampMs": 288,
+    "confidence": null
+  },
+  {
+    "text": " menyiapkan",
+    "startMs": 463,
+    "endMs": 875,
+    "timestampMs": 669,
+    "confidence": null
+  },
+  {
+    "text": " instruksi",
+    "startMs": 875,
+    "endMs": 1363,
+    "timestampMs": 1119,
+    "confidence": null
+  },
+  {
+    "text": " dan",
+    "startMs": 1363,
+    "endMs": 1538,
+    "timestampMs": 1451,
+    "confidence": null
+  },
+  {
+    "text": " data",
+    "startMs": 1538,
+    "endMs": 2050,
+    "timestampMs": 1794,
+    "confidence": null
+  },
+  {
+    "text": " lalu",
+    "startMs": 2388,
+    "endMs": 2638,
+    "timestampMs": 2513,
+    "confidence": null
+  },
+  {
+    "text": " mengirim",
+    "startMs": 2638,
+    "endMs": 2950,
+    "timestampMs": 2794,
+    "confidence": null
+  },
+  {
+    "text": " bagian",
+    "startMs": 2950,
+    "endMs": 3288,
+    "timestampMs": 3119,
+    "confidence": null
+  },
+  {
+    "text": " pekerjaan",
+    "startMs": 3288,
+    "endMs": 3763,
+    "timestampMs": 3526,
+    "confidence": null
+  },
+  {
+    "text": " grafis",
+    "startMs": 3763,
+    "endMs": 4175,
+    "timestampMs": 3969,
+    "confidence": null
+  },
+  {
+    "text": " ke",
+    "startMs": 4175,
+    "endMs": 4275,
+    "timestampMs": 4225,
+    "confidence": null
+  },
+  {
+    "text": " GPU",
+    "startMs": 4275,
+    "endMs": 4900,
+    "timestampMs": 4588,
+    "confidence": null
+  }
+]

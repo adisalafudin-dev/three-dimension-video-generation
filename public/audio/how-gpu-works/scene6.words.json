@@ -1,0 +1,100 @@
+[
+  {
+    "text": " Kipas",
+    "startMs": 100,
+    "endMs": 450,
+    "timestampMs": 275,
+    "confidence": null
+  },
+  {
+    "text": " membuang",
+    "startMs": 450,
+    "endMs": 750,
+    "timestampMs": 600,
+    "confidence": null
+  },
+  {
+    "text": " panas",
+    "startMs": 750,
+    "endMs": 1125,
+    "timestampMs": 938,
+    "confidence": null
+  },
+  {
+    "text": " saat",
+    "startMs": 1125,
+    "endMs": 1338,
+    "timestampMs": 1232,
+    "confidence": null
+  },
+  {
+    "text": " beban",
+    "startMs": 1338,
+    "endMs": 1613,
+    "timestampMs": 1476,
+    "confidence": null
+  },
+  {
+    "text": " meningkat",
+    "startMs": 1613,
+    "endMs": 2200,
+    "timestampMs": 1907,
+    "confidence": null
+  },
+  {
+    "text": " GPU",
+    "startMs": 3038,
+    "endMs": 3488,
+    "timestampMs": 3263,
+    "confidence": null
+  },
+  {
+    "text": " unggul",
+    "startMs": 3488,
+    "endMs": 3838,
+    "timestampMs": 3663,
+    "confidence": null
+  },
+  {
+    "text": " ketika",
+    "startMs": 3838,
+    "endMs": 4113,
+    "timestampMs": 3976,
+    "confidence": null
+  },
+  {
+    "text": " banyak",
+    "startMs": 4113,
+    "endMs": 4375,
+    "timestampMs": 4244,
+    "confidence": null
+  },
+  {
+    "text": " tugas",
+    "startMs": 4375,
+    "endMs": 4700,
+    "timestampMs": 4538,
+    "confidence": null
+  },
+  {
+    "text": " serupa",
+    "startMs": 4700,
+    "endMs": 5000,
+    "timestampMs": 4850,
+    "confidence": null
+  },
+  {
+    "text": " berjalan",
+    "startMs": 5000,
+    "endMs": 5450,
+    "timestampMs": 5225,
+    "confidence": null
+  },
+  {
+    "text": " bersamaan",
+    "startMs": 5450,
+    "endMs": 6213,
+    "timestampMs": 5832,
+    "confidence": null
+  }
+]

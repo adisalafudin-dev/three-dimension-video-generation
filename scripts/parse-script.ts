@@ -329,6 +329,10 @@ for (const [bi, block] of blocks.entries()) {
     );
   }
   if (s.kit) validateKitParts(s.kit, kitParts, title, fail);
+  if (s.theme && ["space", "lab", "indoor"].includes(s.theme)) {
+    if (s.time) console.warn(`Warning: scene "${title}": time is ignored for theme "${s.theme}"`);
+    if (s.weather) console.warn(`Warning: scene "${title}": weather is ignored for theme "${s.theme}"`);
+  }
   if (props.length && s.theme !== "space") fail(`Scene "${title}": planet and blackhole props require theme: space`);
   for (const t of ["planet", "blackhole"] as const) if (props.filter((p) => p.type === t).length > 1) fail(`Scene "${title}": at most one + ${t} prop is allowed`);
   if (cameraKeys.length > 0 && s.cameraTo) {
@@ -350,7 +354,7 @@ for (const [bi, block] of blocks.entries()) {
       "model",
       "color",
       "background",
-      "theme", "themeDetail",
+      "theme", "themeDetail", "time", "weather",
       "rotationSpeed",
       "animation", "animationSpeed", "modelRotate",
       "kit",
@@ -380,6 +384,8 @@ for (const [bi, block] of blocks.entries()) {
     background: s.background ?? "#000000",
     theme: s.theme,
     themeDetail: s.themeDetail ?? "low",
+    time: s.time ?? "day",
+    weather: s.weather ?? "clear",
     motion,
     poses,
     props,
@@ -437,6 +443,8 @@ if (errors.length === 0) {
     s.modelRotate = first.modelRotate;
     s.theme = first.theme;
     s.themeDetail = first.themeDetail;
+    s.time = first.time;
+    s.weather = first.weather;
     s.props = first.props;
     s.color = first.color;
     s.background = first.background;

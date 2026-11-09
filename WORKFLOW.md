@@ -45,7 +45,8 @@ Urutan ringkas: `voice -> check -> (studio) -> make`.
 - Chapter: scene berurutan dengan `chapter:` sama berbagi satu dunia 3D, kamera menyambung (`@ 3.5 camera pos="x, y, z"`). Scene lanjutan tidak boleh set shape/color/background/camera/transition.
 - Kit: `kit: layers` (`+ layer ...`, aksi `explode`, `highlight`) atau `kit: road` (`+ rain`, `+ car`, aksi `drive`, `rain`).
 - Gerak objek: `@ 0 motion preset=fall-into from="..." target="..." for=4` (preset: fall-into, launch, fly-to, drive, orbit, float). Tidak butuh model beranimasi. `@ t pose style=flail|float|run|wave` untuk humanoid.
-- Tema: `theme: space|farm` (menggantikan `background`). `background` juga boleh `gradient(#a, #b, 180deg)` atau `image(images/x.jpg)`. Prop: `+ planet ...`, `+ blackhole ...`.
+- Environment: set on the chapter's first scene: `theme: space|farm|city|ocean|forest|desert|indoor|lab|highway`, `time: dawn|day|dusk|night` (default day), `weather: clear|rain|fog|snow|dust` (default clear), `themeDetail: low|high` (default low). `time`/`weather` require a theme. They are ignored with a parser warning for `space`, `lab` and `indoor`. Theme and `background` are mutually exclusive. Example: `theme: city`, `time: dusk`, `weather: rain`.
+- Space props: `+ planet ...` and `+ blackhole ...`. For `theme: highway` with `kit: road`, rain is passed to the road kit so it is not drawn twice.
 - `animation: "Klip"` hanya untuk `.glb` yang punya klip (cek di gltf-viewer.donmccurdy.com). Selain itu pakai `motion`.
 - Portrait 1080x1920: kamera z 8 sampai 12, bagian bawah 20% kosong.
 
@@ -54,7 +55,7 @@ Urutan ringkas: `voice -> check -> (studio) -> make`.
 1. Cari `.glb`: Poly Pizza, Kenney, Quaternius (CC0), Sketchfab (Downloadable, glTF/glb). Cek lisensi, CC-BY perlu kredit.
 2. Taruh di `public/models/`.
 3. Di scene: `shape: model` dan `model: models/nama.glb` (keduanya wajib). Ukuran dan posisi otomatis, `color` diabaikan, berputar di sumbu Y, animasi di dalam file tidak diputar.
-4. Background hanya warna polos: `background: #0b1020`.
+4. Background can be solid, gradient or a local image. Themes derive sky, light, fog and weather effects locally and deterministically.
 
 ## 6. Troubleshooting
 

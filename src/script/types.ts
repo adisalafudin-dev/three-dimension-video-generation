@@ -9,6 +9,9 @@ export type TransitionType = "none" | "fade" | "slide" | "wipe";
 export type CameraKey = { time: number; pos: Vec3; ease: CameraEase };
 
 export type KitName = "layers" | "road";
+export type ThemeName = "space" | "farm" | "city" | "ocean" | "forest" | "desert" | "indoor" | "lab" | "highway";
+export type TimeOfDay = "dawn" | "day" | "dusk" | "night";
+export type Weather = "clear" | "rain" | "fog" | "snow" | "dust";
 export type MotionPreset = "fall-into" | "launch" | "fly-to" | "drive" | "orbit" | "float";
 export type MotionAction = { start: number; end: number; preset: MotionPreset; target?: Vec3; from?: Vec3; ease: CameraEase; turns: number; tumble: number; loop: boolean };
 export type PoseAction = { start: number; end: number; style: "flail" | "float" | "run" | "wave"; amount: number; fallbackTumble: boolean };
@@ -75,8 +78,10 @@ export type SceneData = {
   kit?: KitName; // procedural 3D world instead of a single shape
   kitParts?: KitPart[];
   kitActions?: KitAction[];
-  theme?: "space" | "farm";
+  theme?: ThemeName;
   themeDetail: "low" | "high";
+  time: TimeOfDay;
+  weather: Weather;
   motion: MotionAction[];
   poses: PoseAction[];
   props: SceneProp[];
